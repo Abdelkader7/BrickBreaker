@@ -3,11 +3,12 @@ import pygame
 class Ball(pygame.sprite.Sprite):
     BALL_SPEED = 8
 
-    def __init__(self, x, y):
+    def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.direction_x = 1
         self.direciton_y = 1
-        self.image = pygame.image.load("Images/PNG/58-Breakout-Tiles.png").convert_alpha()
+        #self.image = pygame.image.load("Images/PNG/58-Breakout-Tiles.png").convert_alpha()
+        self.image = pygame.image.load(image).convert_alpha()
         self.image = pygame.transform.scale(self.image, (x,y))
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()

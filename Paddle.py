@@ -9,7 +9,7 @@ class Paddle(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
     def move_left(self):
-        self.rect.x -= 20
+        self.rect.x -= 50
 
     def move_right(self):
-        self.rect.x += 20
+        self.rect.x += 50

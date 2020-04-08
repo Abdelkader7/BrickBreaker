@@ -534,8 +534,8 @@ def custom():
         pygame.display.flip()
 
 def game(imageball,background):
-    background = pygame.image.load(background).convert()
-    background = pygame.transform.scale(background, size)
+    backgroundGame = pygame.image.load(background).convert()
+    backgroundGame = pygame.transform.scale(backgroundGame, size)
 
 
     #This will be a list that will contain all the sprites we intend to use in our game.
@@ -579,13 +579,10 @@ def game(imageball,background):
     
     def pause():
         paused = True 
-        #Button Jouer
-        RR = menu.render('Jouer', 1, (0, 0, 255))
-        playRrect = RR.get_rect()
-        playRrect.topleft = (600, 30)
-        screen.blit(RR, playRrect)
-
+            
         while paused:
+          
+
             for event in pygame.event.get():
               # Infinite loop that will be broken when the user press the space bar again
                 if event.type == pygame.QUIT:
@@ -593,12 +590,33 @@ def game(imageball,background):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         paused = False
+                if event.type == MOUSEBUTTONDOWN:
+            # Set the x, y postions of the mouse click
+                    x, y = event.pos
+                    if exitrect.collidepoint(x,y):
+                        continuer = False
+                        paused = False
+                        main()
+                    if resumerect.collidepoint(x,y):
+                        paused = False
+
             test = pygame.Surface((800,600), pygame.SRCALPHA) 
             test.fill((255,255,255))
             screen.blit(test, (0,0))
-            draw_text('PAUSE', menu, (0, 0, 0), screen, 300, 200)
-            draw_text('REPRENDRE LA PARTIE', menu, (0, 0, 0), screen, 300, 300)
-            draw_text('QUITTER LA PARTIE', menu, (0, 0, 0), screen, 300, 400)
+            draw_text('PAUSE', menu, (0, 0, 0), screen, 250, 200)
+
+            resume = menu.render('REPRENDRE LA PARTIE', 1, (0, 0, 0))
+            resumerect = resume.get_rect()
+            resumerect.topleft = (250, 300)
+            screen.blit(resume, resumerect)
+            
+            exitgame = menu.render('QUITTER LA PARTIE', 1, (0, 0, 0))
+            exitrect = exitgame.get_rect()
+            exitrect.topleft = (250, 400)
+            screen.blit(exitgame, exitrect)
+            
+            #draw_text('REPRENDRE LA PARTIE', menu, (0, 0, 0), screen, 300, 300)
+            #draw_text('QUITTER LA PARTIE', menu, (0, 0, 0), screen, 300, 400)
             pygame.display.update()
             clock.tick(5)  
 
@@ -611,18 +629,111 @@ def game(imageball,background):
                 #    if event.type == pygame.KEYDOWN and 
                 #        break  # Exit infinite loop 
 
-   
+    def congratulation(imageball,background,score,nbcoup,lives):
+        continuer = True 
+        backgroundEnd = pygame.image.load("Images/ending.png").convert()
+        backgroundEnd = pygame.transform.scale(backgroundEnd, size)
+        while continuer:       
+            screen.blit(backgroundEnd, (0,0))
+
+            for event in pygame.event.get():
+              # Infinite loop that will be broken when the user press the space bar again
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+
+                if event.type == MOUSEBUTTONDOWN:
+            # Set the x, y postions of the mouse click
+                    x, y = event.pos
+                    if exitrect.collidepoint(x,y):
+                        continuer = False
+                        main()
+                    if tryagainrect.collidepoint(x,y):
+                        continuer = False
+                        game(imageball,background)
+
+           
+            draw_text('FELICITATION !', menu, (255, 255, 255), screen, 200, 50)
+            draw_text(("Vous avez gagne en "+ str(nbcoup) +" coups avec un score de "+ str(score) +" points "), font, (255, 255, 255),screen, 200, 100)
+            
+            draw_text('et en seulement X temps ! ', font, (255, 255, 255), screen, 200, 130)
+            draw_text('Vies restantes = '+ str(lives), font, (255, 255, 255), screen, 200, 160)
+
+
+            draw_text('Classement', font, (255, 255, 255), screen, 100, 200)
+
+
+            tryagain = font.render('REJOUER UNE PARTIE', 1, (255, 255, 255))
+            tryagainrect = tryagain.get_rect()
+            tryagainrect.topleft = (500, 550)
+            screen.blit(tryagain, tryagainrect)
+            
+            exitgame = font.render('CLIQUEZ ICI POUR RETOURNER AU MENU', 1, (255, 255, 255))
+            exitrect = exitgame.get_rect()
+            exitrect.topleft = (100, 550)
+            screen.blit(exitgame, exitrect)
+            
+            pygame.display.update()
+            clock.tick(5)  
+
+
+    def gameover(imageball,background):
+        continuer = True 
+        backgroundEnd = pygame.image.load("Images/gameover.png").convert()
+        backgroundEnd = pygame.transform.scale(backgroundEnd, size)
+
+
+        while continuer:       
+
+            for event in pygame.event.get():
+              # Infinite loop that will be broken when the user press the space bar again
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                if event.type == MOUSEBUTTONDOWN:
+            # Set the x, y postions of the mouse click
+                    x, y = event.pos
+                    if exitrect.collidepoint(x,y):
+                        continuer = False
+                        main()
+                    if tryagainrect.collidepoint(x,y):
+                        continuer = False
+                        game(imageball,background)
+
+            #test = pygame.Surface((800,600), pygame.SRCALPHA) 
+            #test.fill((255,255,255))
+            #screen.blit(test, (0,0))
+            screen.blit(backgroundEnd, (0,0))
+
+            draw_text('GAME OVER', menu, (255, 255, 255), screen, 280, 200)
+
+            tryagain = menu.render('REJOUER UNE PARTIE', 1, (255, 255, 255))
+            tryagainrect = tryagain.get_rect()
+            tryagainrect.topleft = (250, 300)
+            screen.blit(tryagain, tryagainrect)
+            
+            exitgame = menu.render('CLIQUEZ ICI POUR RETOURNER AU MENU', 1, (255, 255, 255))
+            exitrect = exitgame.get_rect()
+            exitrect.topleft = (100, 400)
+            screen.blit(exitgame, exitrect)
+            
+            #draw_text('REPRENDRE LA PARTIE', menu, (0, 0, 0), screen, 300, 300)
+            #draw_text('QUITTER LA PARTIE', menu, (0, 0, 0), screen, 300, 400)
+            pygame.display.update()
+            clock.tick(5)  
+
+        
         
     pygame.display.flip() 
 
     score = 0
     lives = 3
+    nbcoup = 0
     
     # -------- Main Program Loop -----------
     while continuer:
 
         if lives == 0:
             continuer = False
+            gameover(imageball,background)
         # --- Main event looP
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -650,8 +761,10 @@ def game(imageball,background):
        
         # --- Game logic should go here
         ball.move()
+
         if pygame.sprite.collide_mask(ball, paddle):
             ball.flip_direction_y()
+            nbcoup +=1
 
         #if ball.leaves_screen_bottom():
         # reset the ball position
@@ -671,6 +784,7 @@ def game(imageball,background):
         #print(ball.rect.y)
 
         if ball.lose():
+            lives -= 1
             ball.rect.x = 350
             ball.rect.y = 200
             ball.move()
@@ -680,7 +794,6 @@ def game(imageball,background):
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     break  # Exit infinite loop
 
-            lives -= 1
 
 
         if ball.leaves_screen():
@@ -705,11 +818,11 @@ def game(imageball,background):
                 #font = pygame.font.Font(None, 74)
                 #text = font.render("LEVEL COMPLETE", 1, WHITE)
                 #screen.blit(text, (200, 300))
-                pygame.display.flip()
-                pygame.time.wait(3000)
+                #pygame.display.flip()
+                #pygame.time.wait(3000)
 
                 # Stop the Game
-                continuer = False
+                congratulation(imageball,background,score,nbcoup,lives)
 
         # if ball.rect.x >= 760:
         #     ball.velocity[0] = -ball.velocity[0]
@@ -722,7 +835,7 @@ def game(imageball,background):
 
         # --- Drawing code should go here
         # First, clear the screen to dark blue. 
-        screen.blit(background, (0,0))
+        screen.blit(backgroundGame, (0,0))
       
 
         pygame.draw.line(screen, WHITE, [0, 38], [800, 38], 2)

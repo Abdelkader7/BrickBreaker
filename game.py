@@ -471,7 +471,7 @@ def game(imageball):
         #Bloque le paddle
         paddle.leaves_screen_sides()
 
-        print(ball.rect.y)
+        #print(ball.rect.y)
 
         if ball.lose():
             ball.rect.x = 350

@@ -1,7 +1,7 @@
 import pygame
 
 class Ball(pygame.sprite.Sprite):
-    BALL_SPEED = 8
+    BALL_SPEED = 10
 
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -23,7 +23,7 @@ class Ball(pygame.sprite.Sprite):
     def leaves_screen_bottom(self):
         if self.rect.x < 0 or self.rect.x > 754:
             self.flip_direction_x()
-        if self.rect.y < 0:
+        if self.rect.y < 45:
             self.flip_direction_y()
 
         return self.rect.y > 600

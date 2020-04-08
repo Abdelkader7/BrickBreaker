@@ -8,8 +8,11 @@ from Image import Image
 from TextBox import TextBox
 
 
-pygame.init()
 clock = pygame.time.Clock()
+from Brick import Brick
+
+pygame.init()
+
 
 #Colors
 WHITE = (255,255,255)
@@ -26,7 +29,7 @@ lives = 3
 size = (800, 600)
 screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption("Ipssi Brick Breaker")
+pygame.display.set_caption("Brick Breaker")
 
 background1 = pygame.image.load("Images/main1.png").convert()
 background2 = pygame.image.load("Images/main2.png").convert()
@@ -50,90 +53,144 @@ def draw_text(text, font, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 def main():
-     all_sprites_list = pygame.sprite.Group()
+
+    all_sprites_list = pygame.sprite.Group()
+#Create the ball
+#ball = Ball(30,30)
+#ball.rect.x = 400
+#ball.rect.y = 561
+#
+#
+# #Create a list of Brick
+#   liste_brick = []
+# i = 0
+# brick_x_placement = 0
+# brick_y_placement = 60
+# nombre_de_ligne = 5
+#
+# while i < 14*nombre_de_ligne:
+#     liste_brick.append(Brick(3))
+#     #Si on atteint la fin de la ligne, on reviens au début (0) en ajoutant en plus la largeur d'une Brick (30).
+#     if brick_x_placement >= 700:
+#         brick_y_placement += 30
+#         brick_x_placement = 0
+#
+#     liste_brick[i].rect.x = brick_x_placement + liste_brick[i].width
+#     liste_brick[i].rect.y = brick_y_placement
+#
+#     all_sprites_list.add(liste_brick[i])
+#     brick_x_placement += liste_brick[i].width
+#
+#     i += 1
 
     #Logo creation
-     image = Image("logo.png",700,400)
-     image.rect.x = 50
-     image.rect.y = 0
-     all_sprites_list.add(image)
+    image = Image("logo.png",700,400)
+    image.rect.x = 50
+    image.rect.y = 0
+    all_sprites_list.add(image)
 
-     CurrentBackground = 1
+    CurrentBackground = 1
+# Add the paddle to the list of sprites
+    #all_sprites_list.add(paddle)
+    #all_sprites_list.add(ball)
 
-     continuer = True
 
-     while continuer:
+    continuer = True
  
-        if(CurrentBackground==1):
-            screen.blit(background1,(0,0))
-        if(CurrentBackground==2):
-            screen.blit(background2,(0,0))
-        if(CurrentBackground==3):
-            screen.blit(background3,(0,0))
-        if(CurrentBackground==4):
-            screen.blit(background4,(0,0))
-        if(CurrentBackground==4):
-            CurrentBackground=1
-        else:
-            CurrentBackground+=1 
+# The clock will be used to control how fast the screen updates
+    clock = pygame.time.Clock()
+ 
+# -------- Main Program Loop -----------
+    while continuer:
+    # --- Main event looP
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            paddle.move_left()
 
-        #Button Jouer
-        game_selected = menu.render('Jouer', 1, (255, 255, 255))
-        game_pos = game_selected.get_rect()
-        game_pos.topleft = (340, 340)
-        screen.blit(game_selected, game_pos)
-        
-        #Button Instruction
-        instruction_selected = menu.render('Instruction', 1, (255, 255, 255))
-        instruction_pos = instruction_selected.get_rect()
-        instruction_pos.topleft = (340, 390)
-        screen.blit(instruction_selected, instruction_pos)
+        if keys[pygame.K_RIGHT]:
+            paddle.move_right()
 
-        #Button Stat
-        stat_selected = menu.render('Stats', 1, (255, 255, 255))
-        stat_pos = stat_selected.get_rect()
-        stat_pos.topleft = (340, 440)
-        screen.blit(stat_selected, stat_pos)
+        for event in pygame.event.get(): # User did something
+            if event.type == pygame.QUIT: # If user clicked close
+                    continuer = False # Flag that we are done so we exit this loop
+    
 
-        #Button About
-        about_selected = menu.render('A propos', 1, (255, 255, 255))
-        about_pos = about_selected.get_rect()
-        about_pos.topleft = (340, 490)
-        screen.blit(about_selected, about_pos)
+        all_sprites_list.update()
 
-        #Button Quit
-        quit_selected = menu.render('Quitter', 1, (255, 255, 255))
-        quit_pos = quit_selected.get_rect()
-        quit_pos.topleft = (340, 540)
-        screen.blit(quit_selected, quit_pos)
-        
+        continuer = True
 
-        for event in pygame.event.get():
-            pos = pygame.mouse.get_pos()
-            if event.type == QUIT:
-                continuer = False
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-            if event.type == MOUSEBUTTONDOWN:
-            # Set the x, y postions of the mouse click
-                x, y = event.pos
-                if game_pos.collidepoint(x,y):
-                    custom()
-                if instruction_pos.collidepoint(x,y):
-                    instruction()
-                if stat_pos.collidepoint(x,y):
-                    stat()
-                if about_pos.collidepoint(x,y):
-                    about()
-                if quit_pos.collidepoint(x,y):
+        while continuer:
+    
+            if(CurrentBackground==1):
+                screen.blit(background1,(0,0))
+            if(CurrentBackground==2):
+                screen.blit(background2,(0,0))
+            if(CurrentBackground==3):
+                screen.blit(background3,(0,0))
+            if(CurrentBackground==4):
+                screen.blit(background4,(0,0))
+            if(CurrentBackground==4):
+                CurrentBackground=1
+            else:
+                CurrentBackground+=1 
+
+            #Button Jouer
+            game_selected = menu.render('Jouer', 1, (255, 255, 255))
+            game_pos = game_selected.get_rect()
+            game_pos.topleft = (340, 340)
+            screen.blit(game_selected, game_pos)
+            
+            #Button Instruction
+            instruction_selected = menu.render('Instruction', 1, (255, 255, 255))
+            instruction_pos = instruction_selected.get_rect()
+            instruction_pos.topleft = (340, 390)
+            screen.blit(instruction_selected, instruction_pos)
+
+            #Button Stat
+            stat_selected = menu.render('Stats', 1, (255, 255, 255))
+            stat_pos = stat_selected.get_rect()
+            stat_pos.topleft = (340, 440)
+            screen.blit(stat_selected, stat_pos)
+
+            #Button About
+            about_selected = menu.render('A propos', 1, (255, 255, 255))
+            about_pos = about_selected.get_rect()
+            about_pos.topleft = (340, 490)
+            screen.blit(about_selected, about_pos)
+
+            #Button Quit
+            quit_selected = menu.render('Quitter', 1, (255, 255, 255))
+            quit_pos = quit_selected.get_rect()
+            quit_pos.topleft = (340, 540)
+            screen.blit(quit_selected, quit_pos)
+            
+
+            for event in pygame.event.get():
+                pos = pygame.mouse.get_pos()
+                if event.type == QUIT:
                     continuer = False
-        
-        clock.tick(5)
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                if event.type == MOUSEBUTTONDOWN:
+                # Set the x, y postions of the mouse click
+                    x, y = event.pos
+                    if game_pos.collidepoint(x,y):
+                        custom()
+                    if instruction_pos.collidepoint(x,y):
+                        instruction()
+                    if stat_pos.collidepoint(x,y):
+                        stat()
+                    if about_pos.collidepoint(x,y):
+                        about()
+                    if quit_pos.collidepoint(x,y):
+                        continuer = False
+            
+            clock.tick(5)
 
- 
-        all_sprites_list.draw(screen)
-        pygame.display.flip()
+    
+            all_sprites_list.draw(screen)
+            pygame.display.flip()
 
 
 
@@ -563,15 +620,19 @@ def game(imageball,background):
                    # if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                       #  break  # Exit infinite loop
     
-
-        if pygame.sprite.collide_mask(ball, paddle):
-                ball.flip_direction_y()
+       
         # --- Game logic should go here
         ball.move()
+        if pygame.sprite.collide_mask(ball, paddle):
+            ball.flip_direction_y()
         if ball.leaves_screen_bottom():
         # reset the ball position
             ball.rect.x = 200
             ball.rect.y = 300
+
+        #for brick in liste_brick:
+         #   if pygame.sprite:
+          #      ball.flip_direction_x()
         all_sprites_list.update()
         
 

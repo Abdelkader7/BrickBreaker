@@ -12,4 +12,11 @@ class Paddle(pygame.sprite.Sprite):
         self.rect.x -= 50
 
     def move_right(self):
-        self.rect.x += 50
+        self.rect.x += 20
+
+    def leaves_screen_sides(self):
+        if self.rect.x < 0:
+            self.rect.x = 0
+        if self.rect.x > 700:
+            self.rect.x = 700
+

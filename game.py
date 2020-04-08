@@ -6,6 +6,7 @@ from Paddle import Paddle
 from Ball import Ball
 from Image import Image
 from TextBox import TextBox
+from Brick import Brick
 
 
 clock = pygame.time.Clock()
@@ -22,8 +23,6 @@ RED = (255,0,0)
 ORANGE = (255,100,0)
 YELLOW = (255,255,0)
 
-score = 0
-lives = 3
 
 # Open a new window
 size = (800, 600)
@@ -548,10 +547,30 @@ def game(imageball,background):
     paddle.rect.y = 560
 
     #Create the ball
-    ball = Ball(imageball,40,40)
+    ball = Ball(imageball,20,20)
     ball.rect.x = 400
     ball.rect.y = 561
 
+    all_bricks = pygame.sprite.Group()
+
+    for i in range(7):
+        brick = Brick(3, 80, 30)
+        brick.rect.x = 60 + i * 100
+        brick.rect.y = 60
+        all_sprites_list.add(brick)
+        all_bricks.add(brick)
+    for i in range(7):
+        brick = Brick(2, 80, 30)
+        brick.rect.x = 60 + i * 100
+        brick.rect.y = 100
+        all_sprites_list.add(brick)
+        all_bricks.add(brick)
+    for i in range(7):
+        brick = Brick(1, 80, 30)
+        brick.rect.x = 60 + i * 100
+        brick.rect.y = 140
+        all_sprites_list.add(brick)
+        all_bricks.add(brick)
 
     # Add the paddle to the list of sprites
     all_sprites_list.add(paddle)
@@ -595,9 +614,15 @@ def game(imageball,background):
    
         
         pygame.display.flip() 
+
+    score = 0
+    lives = 3
     
     # -------- Main Program Loop -----------
     while continuer:
+
+        if lives == 0:
+            continuer = False
         # --- Main event looP
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -605,6 +630,8 @@ def game(imageball,background):
 
         if keys[pygame.K_RIGHT]:
             paddle.move_right()
+
+        all_sprites_list.update()
 
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
@@ -625,18 +652,73 @@ def game(imageball,background):
         ball.move()
         if pygame.sprite.collide_mask(ball, paddle):
             ball.flip_direction_y()
-        if ball.leaves_screen_bottom():
+        #if ball.leaves_screen_bottom():
         # reset the ball position
-            ball.rect.x = 200
-            ball.rect.y = 300
+          #  ball.rect.x = 200
+         #   ball.rect.y = 300
 
         #for brick in liste_brick:
          #   if pygame.sprite:
           #      ball.flip_direction_x()
         all_sprites_list.update()
         
+         
 
-    
+        #Bloque le paddle
+        paddle.leaves_screen_sides()
+
+        #print(ball.rect.y)
+
+        if ball.lose():
+            ball.rect.x = 350
+            ball.rect.y = 200
+            ball.move()
+
+            while True:  # Infinite loop that will be broken when the user press the space bar again
+                event = pygame.event.wait()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    break  # Exit infinite loop
+
+            lives -= 1
+
+
+        if ball.leaves_screen():
+        # reset the ball position
+            ball.rect.x = 200
+            ball.rect.y = 300
+
+        # Check if there is a car collision
+        brick_collision_list = pygame.sprite.spritecollide(ball, all_bricks, False)
+        for brick in brick_collision_list:
+            ball.flip_direction_y()
+            #ball.flip_direction_x()
+            score += 1
+
+            if brick.coup <= 0:
+                brick.kill()
+            else:
+                brick.touche()
+
+            if len(all_bricks) == 0:
+                # Display Level Complete Message for 3 seconds
+                #font = pygame.font.Font(None, 74)
+                #text = font.render("LEVEL COMPLETE", 1, WHITE)
+                #screen.blit(text, (200, 300))
+                pygame.display.flip()
+                pygame.time.wait(3000)
+
+                # Stop the Game
+                continuer = False
+
+        # if ball.rect.x >= 760:
+        #     ball.velocity[0] = -ball.velocity[0]
+        # if ball.rect.x <= 0:
+        #     ball.velocity[0] = -ball.velocity[0]
+        # if ball.rect.y > 590:
+        #     ball.velocity[1] = -ball.velocity[1]
+        # if ball.rect.y < 60:
+        #     ball.velocity[1] = -ball.velocity[1]
+
         # --- Drawing code should go here
         # First, clear the screen to dark blue. 
         screen.blit(background, (0,0))

@@ -547,9 +547,9 @@ def game(imageball,background):
     paddle.rect.y = 560
 
     #Create the ball
-    ball = Ball(imageball,20,20)
+    ball = Ball(imageball,30,30)
     ball.rect.x = 400
-    ball.rect.y = 561
+    ball.rect.y = 500
 
     all_bricks = pygame.sprite.Group()
 
@@ -613,7 +613,7 @@ def game(imageball,background):
 
    
         
-        pygame.display.flip() 
+    pygame.display.flip() 
 
     score = 0
     lives = 3
@@ -631,7 +631,7 @@ def game(imageball,background):
         if keys[pygame.K_RIGHT]:
             paddle.move_right()
 
-        all_sprites_list.update()
+        #all_sprites_list.update()
 
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
@@ -652,6 +652,7 @@ def game(imageball,background):
         ball.move()
         if pygame.sprite.collide_mask(ball, paddle):
             ball.flip_direction_y()
+
         #if ball.leaves_screen_bottom():
         # reset the ball position
           #  ball.rect.x = 200
@@ -691,7 +692,7 @@ def game(imageball,background):
         brick_collision_list = pygame.sprite.spritecollide(ball, all_bricks, False)
         for brick in brick_collision_list:
             ball.flip_direction_y()
-            #ball.flip_direction_x()
+           # ball.flip_direction_x()
             score += 1
 
             if brick.coup <= 0:

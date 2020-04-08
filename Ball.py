@@ -2,7 +2,7 @@ import pygame
 from random import randint
 
 class Ball(pygame.sprite.Sprite):
-    BALL_SPEED = 10
+    BALL_SPEED = 8
 
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)

@@ -6,7 +6,7 @@ class Ball(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.direction_x = 1
-        self.direciton_y = 1
+        self.direction_y = 1
         #self.image = pygame.image.load("Images/PNG/58-Breakout-Tiles.png").convert_alpha()
         self.image = pygame.image.load(image).convert_alpha()
         self.image = pygame.transform.scale(self.image, (x,y))
@@ -18,7 +18,7 @@ class Ball(pygame.sprite.Sprite):
         self.direction_x *= -1
 
     def flip_direction_y(self):
-        self.direciton_y *= -1
+        self.direction_y *= -1
 
     def leaves_screen_bottom(self):
         if self.rect.x < 0 or self.rect.x > 754:
@@ -30,4 +30,4 @@ class Ball(pygame.sprite.Sprite):
 
     def move(self):
         self.rect.x += self.BALL_SPEED * self.direction_x
-        self.rect.y += self.BALL_SPEED * self.direciton_y
+        self.rect.y += self.BALL_SPEED * self.direction_y

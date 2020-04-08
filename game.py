@@ -28,10 +28,10 @@ screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Ipssi Brick Breaker")
 
-background1 = pygame.image.load("Images/main1.png").convert_alpha()
-background2 = pygame.image.load("Images/main2.png").convert_alpha()
-background3 = pygame.image.load("Images/main3.png").convert_alpha()
-background4 = pygame.image.load("Images/main4.png").convert_alpha()
+background1 = pygame.image.load("Images/main1.png").convert()
+background2 = pygame.image.load("Images/main2.png").convert()
+background3 = pygame.image.load("Images/main3.png").convert()
+background4 = pygame.image.load("Images/main4.png").convert()
 
 
 #Adapt background size
@@ -146,65 +146,110 @@ def instruction():
      screen.blit(background, (0,0))
      all_item_list = pygame.sprite.Group()
 
-     #Bloc transparent
-     s = pygame.Surface((590,350), pygame.SRCALPHA) 
-     s.fill((0,0,0,128))       
-     screen.blit(s, (200,200))
+  
+     
+     #rectangle vide à l'intérieur
+     #pygame.draw.rect(screen,(255,255,255),(200,150,500,50),width=3)
+
+     #screen.blit(test,(100,100))
+    #Bloc transparent rule
+     window_rule = pygame.Surface((630,120), pygame.SRCALPHA) 
+     window_rule.fill((0,0,0,128))       
+     screen.blit(window_rule, (100,80))
+     text_instruction = pygame.font.Font("miami.ttf", 14)
+
+     text = font.render("Regle du jeu : ", 1, (255, 255, 255))
+     screen.blit(text, (350,100))
+     rule = pygame.font.Font(None, 15)
+     text = text_instruction.render("Il faut casser toutes les briques en faisant rebondir la balle sur la plateforme et sans la faire tomber. ", 1, (255, 255, 255))
+     screen.blit(text, (110,130))
+     live = Image("Images/PNG/60-Breakout-Tiles.png",30,30)
+     live.rect.x = 110
+     live.rect.y = 150
+     text = font.render("x3 ", 1, (255, 255, 255))
+     screen.blit(text, (145,160))
+     text = text_instruction.render("Vous commencez le jeu avec 3 credits et tous les 10000pts vous gagnez une vie. ", 1, (255, 255, 255))
+     screen.blit(text, (170,160))
+     #Points
+     brique = Image("Images/PNG/05-Breakout-Tiles.png",50,20)
+     brique.rect.x = 185
+     brique.rect.y = 175
+     text = text_instruction.render("= 100pts ", 1, (255, 255, 255))
+     screen.blit(text, (240,180))
+
+     demi = Image("Images/PNG/23-Breakout-Tiles.png",20,20)
+     demi.rect.x = 300
+     demi.rect.y = 175
+     text = text_instruction.render("= 200pts ", 1, (255, 255, 255))
+     screen.blit(text, (330,180))
+
+     capsule = Image("Images/PNG/40-Breakout-Tiles.png",60,20)
+     capsule.rect.x = 390
+     capsule.rect.y = 175
+     text = text_instruction.render("= 500pts ", 1, (255, 255, 255))
+     screen.blit(text, (475,180))
+     
+     
+
+
+     #Bloc transparent power 
+     window_transparent = pygame.Surface((590,350), pygame.SRCALPHA) 
+     window_transparent.fill((0,0,0,128))       
+     screen.blit(window_transparent, (200,230))
 
     #Instruction move
-     text_instruction = pygame.font.Font("miami.ttf", 14)
      text = text_instruction.render("Les fleches droite et gauche permettent de deplacer le paddle ", 1, (255, 255, 255))
-     screen.blit(text, (200,220))
+     screen.blit(text, (200,250))
      text = text_instruction.render("dans le sens respective de la fleche. ", 1, (255, 255, 255))
-     screen.blit(text, (200,235))
+     screen.blit(text, (200,265))
 
 
      keyright = Image("keyboardright.png",50,50)
      keyright.rect.x = 100
-     keyright.rect.y = 200
+     keyright.rect.y = 230
 
      keyleft = Image("keyboardleft.png",50,50)
      keyleft.rect.x = 50
-     keyleft.rect.y = 200
+     keyleft.rect.y = 230
 
     #Instruction items
      itemagrandi = Image("Images/PNG/itemagrandi.png",100,25)
      itemagrandi.rect.x = 50
-     itemagrandi.rect.y = 260
+     itemagrandi.rect.y = 290
      text = text_instruction.render("Si votre paddle touche cet item, la taille du paddle augmente.", 1, (255, 255, 255))
-     screen.blit(text, (200,270))
+     screen.blit(text, (200,300))
 
      itemretreci = Image("Images/PNG/itemretreci.png",100,25)
      itemretreci.rect.x = 50
-     itemretreci.rect.y = 310
+     itemretreci.rect.y = 340
      text = text_instruction.render("Si votre paddle touche cet item, la taille du paddle retreci.", 1, (255, 255, 255))
-     screen.blit(text, (200,320))
+     screen.blit(text, (200,350))
 
      itemfast = Image("Images/PNG/itemfast.png",100,25)
      itemfast.rect.x = 50
-     itemfast.rect.y = 360
+     itemfast.rect.y = 390
      text = text_instruction.render("Si votre paddle touche cet item, la vitesse de la balle augmente.", 1, (255, 255, 255))
-     screen.blit(text, (200,370))
+     screen.blit(text, (200,400))
 
      itemslow = Image("Images/PNG/itemslow.png",100,25)
      itemslow.rect.x = 50
-     itemslow.rect.y = 410
+     itemslow.rect.y = 440
      text = text_instruction.render("Si votre paddle touche cet item, la vitesse du paddle retreci.", 1, (255, 255, 255))
-     screen.blit(text, (200,420))
+     screen.blit(text, (200,450))
 
      itemlaser = Image("Images/PNG/itemlaser.png",100,25)
      itemlaser.rect.x = 50
-     itemlaser.rect.y = 460
+     itemlaser.rect.y = 490
      text = text_instruction.render("Si votre paddle touche cet item, des lasers pouvant briser les briques sont ajoutes au paddle.", 1, (255, 255, 255))
-     screen.blit(text, (200,470))
+     screen.blit(text, (200,500))
 
      itemaddball = Image("Images/PNG/itemaddball.png",100,25)
      itemaddball.rect.x = 50
-     itemaddball.rect.y = 510
+     itemaddball.rect.y = 540
      text = text_instruction.render("Si votre paddle touche cet item, une balle supplementaire est ajoutee a l'ecran.", 1, (255, 255, 255))
-     screen.blit(text, (200,520))
+     screen.blit(text, (200,550))
 
-     all_item_list.add(keyright,keyleft,itemaddball,itemagrandi,itemfast,itemslow,itemlaser,itemretreci)
+     all_item_list.add(keyright,keyleft,itemaddball,itemagrandi,itemfast,itemslow,itemlaser,itemretreci,live,brique,capsule,demi)
      continuer = True
 
      #TITLE
@@ -309,10 +354,10 @@ def about():
         pygame.display.flip()
 
 def custom():
-
-     background = pygame.image.load("Images/background.png").convert()
-     background = pygame.transform.scale(background, size)
-     screen.blit(background, (0,0))
+     background = "Images/background.png"
+     Loadbackground = pygame.image.load(background).convert()
+     Loadbackground = pygame.transform.scale(Loadbackground, size)
+     screen.blit(Loadbackground, (0,0))
      all_custom_list = pygame.sprite.Group()
 
      imageball="Images/PNG/58-Breakout-Tiles.png"
@@ -324,14 +369,49 @@ def custom():
      labelObligatoire = indication.render("(Obligatoire)", 1, (255, 255, 255))
 
      textboxes = [username]
-
-
-     ball1 = Image("Images/ball2.png",50,50)
-     ball1.rect.x = 200
-     ball1.rect.y = 300
+     
+     #Ball Choice
+     draw_text('Choix de la balle :', indication, (255, 255, 255), screen, 70, 180)
+     ball1 = Image("Images/PNG/58-Breakout-Tiles.png",50,50)
+     ball1.rect.x = 90
+     ball1.rect.y = 200
+     text = font.render("Metal Ball", 1, (255, 255, 255))
+     screen.blit(text, (70,265))
+     ball2 = Image("Images/ball2.png",50,50)
+     ball2.rect.x = 240
+     ball2.rect.y = 200
      text = font.render("Foot Ball", 1, (255, 255, 255))
-     screen.blit(text, (200,400))
-     all_custom_list.add(ball1)
+     screen.blit(text, (220,265))
+     ball3 = Image("Images/ball5.png",50,50)
+     ball3.rect.x = 390
+     ball3.rect.y = 200
+     text = font.render("Kirby Ball", 1, (255, 255, 255))
+     screen.blit(text, (370,265))
+
+     #Background Choice
+     draw_text("Choix du fond d'ecran :", indication, (255, 255, 255), screen, 70, 350)
+
+     background1 = Image("Images/background.png",200,150)
+     background1.rect.x = 50
+     background1.rect.y = 370
+     text = font.render("Montagne", 1, (255, 255, 255))
+     screen.blit(text, (100,550))
+
+     background2 = Image("Images/Beach.gif",200,150)
+     background2.rect.x = 300
+     background2.rect.y = 370
+     text = font.render("Plage", 1, (255, 255, 255))
+     screen.blit(text, (350,550))
+
+     background3 = Image("Images/Temple.png",200,150)
+     background3.rect.x = 550
+     background3.rect.y = 370
+     text = font.render("Temple", 1, (255, 255, 255))
+     screen.blit(text, (600,550))
+
+
+
+     all_custom_list.add(ball1,ball2,ball3,background3,background1,background2)
 
      #TITLE
      draw_text('Personnalisation', menu, (255, 255, 255), screen, 250, 30)
@@ -366,14 +446,25 @@ def custom():
             if event.type == MOUSEBUTTONDOWN:
             # Set the x, y postions of the mouse click
                 x, y = event.pos
+                if ball1.rect.collidepoint(x,y):
+                    imageball="Images/PNG/58-Breakout-Tiles.png"
+                if ball2.rect.collidepoint(x,y):
+                    imageball="Images/ball2.png"
+                if ball3.rect.collidepoint(x,y):
+                    imageball="Images/ball5.png"
+                if background1.rect.collidepoint(x,y):
+                    background="Images/background.png"
+                if background2.rect.collidepoint(x,y):
+                    background="Images/Beach.gif"
+                if background3.rect.collidepoint(x,y):
+                    background="Images/Temple.png"
                 if cancelrect.collidepoint(x,y):
                     continuer = False
                 if playrect.collidepoint(x,y) and (len(username.text)>0) :
                     continuer = False
-                    game(imageball)
-                if ball1.rect.collidepoint(x,y):
-                    imageball="Images/ball2.png"
-                    print("selected")
+                    game(imageball,background)
+                    
+                
         for textbox in textboxes:
             textbox.update()
             textbox.draw(screen)
@@ -386,8 +477,8 @@ def custom():
 
         pygame.display.flip()
 
-def game(imageball):
-    background = pygame.image.load("Images/background.png").convert()
+def game(imageball,background):
+    background = pygame.image.load(background).convert()
     background = pygame.transform.scale(background, size)
 
 
@@ -410,6 +501,43 @@ def game(imageball):
     all_sprites_list.add(ball)
     continuer = True
     
+    def pause():
+        paused = True 
+        #Button Jouer
+        RR = menu.render('Jouer', 1, (0, 0, 255))
+        playRrect = RR.get_rect()
+        playRrect.topleft = (600, 30)
+        screen.blit(RR, playRrect)
+
+        while paused:
+            for event in pygame.event.get():
+              # Infinite loop that will be broken when the user press the space bar again
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        paused = False
+            test = pygame.Surface((800,600), pygame.SRCALPHA) 
+            test.fill((255,255,255))
+            screen.blit(test, (0,0))
+            draw_text('PAUSE', menu, (0, 0, 0), screen, 300, 200)
+            draw_text('REPRENDRE LA PARTIE', menu, (0, 0, 0), screen, 300, 300)
+            draw_text('QUITTER LA PARTIE', menu, (0, 0, 0), screen, 300, 400)
+            pygame.display.update()
+            clock.tick(5)  
+
+             
+
+
+
+            #event = pygame.event.wait()
+               #     draw_text('PAUSE', menu, (255, 255, 255), screen, 300, 100)
+                #    if event.type == pygame.KEYDOWN and 
+                #        break  # Exit infinite loop 
+
+   
+        
+        pygame.display.flip() 
     
     # -------- Main Program Loop -----------
     while continuer:
@@ -425,7 +553,17 @@ def game(imageball):
             if event.type == pygame.QUIT: # If user clicked close
                 #PARA INSERT DATA
                 continuer = False # Flag that we are done so we exit this loop
+
+                # PAUSE
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                pause()
+                #while True:  # Infinite loop that will be broken when the user press the space bar again
+                    #event = pygame.event.wait()
+                    #draw_text('PAUSE', menu, (255, 255, 255), screen, 300, 100)
+                   # if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                      #  break  # Exit infinite loop
     
+
         if pygame.sprite.collide_mask(ball, paddle):
                 ball.flip_direction_y()
         # --- Game logic should go here
@@ -460,6 +598,9 @@ def game(imageball):
         
         # --- Limit to 60 frames per second
         clock.tick(60)
+
+
+ 
 main()
     #Once we have exited the main program loop we can stop the game engine:
 pygame.quit()

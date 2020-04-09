@@ -21,3 +21,6 @@ class Paddle(pygame.sprite.Sprite):
         if self.rect.x > 700:
             self.rect.x = 700
 
+    def reinitialiser_position(self):
+        self.rect.x = 350
+        self.rect.y = 560

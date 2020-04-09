@@ -33,10 +33,10 @@ class Pouvoir(pygame.sprite.Sprite):
         paddle.image = pygame.transform.scale(paddle.image, (50, 20))
 
     def accelerer(self, ball):
-        ball.vitesse = 12
+        ball.vitesse += 6
 
     def ralenti(self, ball):
-        ball.vitesse = 6
+        ball.vitesse -= 6
 
     def laser(self, paddle):
         paddle.image = pygame.image.load("Images/PNG/55-Breakout-Tiles.png").convert_alpha()

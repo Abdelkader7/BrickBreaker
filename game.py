@@ -792,6 +792,14 @@ def game(imageball,background):
 
     liste_pouvoir = []
     ball_2_active = False
+    agrandi_active = False
+    retreci_active = False
+
+
+    #Countdown pouvoir 
+    agrandissement = 1000
+    retreci_count = 1000
+    extraball_count = 100
 
     # pouvoir = Pouvoir()
     # pouvoir.rect.x = 500
@@ -848,6 +856,8 @@ def game(imageball,background):
             if pygame.sprite.collide_mask(pouvoir, paddle):
                 if pouvoir.rand_pouvoir == 1:
                     pouvoir.agrandir(paddle)
+                    agrandi_active = True
+                    agrandissement = 1000
                     pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 2:
                     pouvoir.accelerer(ball)
@@ -857,10 +867,13 @@ def game(imageball,background):
                     pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 4:
                     pouvoir.retrecissement(paddle)
+                    retreci_active = True
+                    retreci_count = 1000
                     pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 5:
                     if ball_2_active is False:
                         ball_2_active = True
+                        extraball_count = 100
                         extra_ball = Ball(imageball, 25, 25)
                         extra_ball.rect.x = 400
                         extra_ball.rect.y = 250
@@ -880,12 +893,28 @@ def game(imageball,background):
         if 'extra_ball' in globals():
             if extra_ball.lose():
                 extra_ball.kill()
-
+        if agrandi_active: 
+            agrandissement -=1 
+            if agrandissement == 0:
+                paddle.image = pygame.image.load("Images/50-Breakout-Tiles.png").convert_alpha()
+                paddle.image = pygame.transform.scale(paddle.image, (100,30))     
+                agrandi_active = False
+        if retreci_active: 
+            retreci_count -=1 
+            if retreci_count == 0:
+                paddle.image = pygame.image.load("Images/50-Breakout-Tiles.png").convert_alpha()
+                paddle.image = pygame.transform.scale(paddle.image, (100,30))     
+                retreci_active = False
         if ball_2_active:
             if pygame.sprite.collide_mask(extra_ball, paddle):
                 extra_ball.flip_direction_y()
             extra_ball.move()
+            extraball_count -= 1
             extra_ball.leaves_screen()
+            if extraball_count == 0:
+                ball_2_active == False
+                extra_ball.kill()
+
 
             element_collision_list = pygame.sprite.spritecollide(extra_ball, all_bricks, False)
             for element in element_collision_list:
@@ -963,6 +992,8 @@ def game(imageball,background):
                 pouvoir.kill()
             liste_pouvoir = []
             ball_2_active = False
+            paddle.image = pygame.image.load("Images/50-Breakout-Tiles.png").convert_alpha()
+            paddle.image = pygame.transform.scale(paddle.image, (100,30))  
             #ball.move()
 
             #for event in pygame.event.get():                
@@ -1045,7 +1076,7 @@ def game(imageball,background):
         if state == 0:
             draw_text("Appuyer sur la barre d'espace", menu, (255, 255, 255), screen, 100, 300)
             draw_text("- pour lancer la balle", menu, (255, 255, 255), screen, 100, 400)
-            draw_text("- ou mettre pause", menu, (255, 255, 255), screen, 100, 400)
+            draw_text("- ou mettre pause", menu, (255, 255, 255), screen, 100, 500)
             ball.rect.x = 400
             ball.rect.y = 200
         all_sprites_list.draw(screen)

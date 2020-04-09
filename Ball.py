@@ -2,12 +2,13 @@ import pygame
 from random import randint
 
 class Ball(pygame.sprite.Sprite):
-    BALL_SPEED = 8
+
 
     def __init__(self, image, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.direction_x = 1
         self.direction_y = 1
+        self.vitesse = 8
         #self.image = pygame.image.load("Images/PNG/58-Breakout-Tiles.png").convert_alpha()
         self.image = pygame.image.load(image).convert_alpha()
         self.image = pygame.transform.scale(self.image, (x,y))
@@ -39,7 +40,7 @@ class Ball(pygame.sprite.Sprite):
         #return self.rect.y > 600
 
     def lose(self):
-        if self.rect.y >580:
+        if self.rect.y > 580:
             return True
 
     # def update(self):
@@ -51,5 +52,9 @@ class Ball(pygame.sprite.Sprite):
     #     self.velocity[1] = randint(-8, 8)
 
     def move(self):
-        self.rect.x += self.BALL_SPEED * self.direction_x
-        self.rect.y += self.BALL_SPEED * self.direction_y
+        self.rect.x += self.vitesse * self.direction_x
+        self.rect.y += self.vitesse * self.direction_y
+
+    def reinitialiser_position(self):
+        self.rect.x = 350
+        self.rect.y = 200

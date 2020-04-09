@@ -6,6 +6,8 @@ from Paddle import Paddle
 from Ball import Ball
 from Image import Image
 from TextBox import TextBox
+from Square import Square
+from Pouvoir import Pouvoir
 from Brick import Brick
 
 
@@ -23,6 +25,9 @@ RED = (255,0,0)
 ORANGE = (255,100,0)
 YELLOW = (255,255,0)
 
+#FALLING SPEED
+POWER_FALLING_SPEED = 2
+BONUS_FALLING_SPEED = 5
 
 # Open a new window
 size = (800, 600)
@@ -54,33 +59,7 @@ def draw_text(text, font, color, surface, x, y):
 def main():
 
     all_sprites_list = pygame.sprite.Group()
-#Create the ball
-#ball = Ball(30,30)
-#ball.rect.x = 400
-#ball.rect.y = 561
-#
-#
-# #Create a list of Brick
-#   liste_brick = []
-# i = 0
-# brick_x_placement = 0
-# brick_y_placement = 60
-# nombre_de_ligne = 5
-#
-# while i < 14*nombre_de_ligne:
-#     liste_brick.append(Brick(3))
-#     #Si on atteint la fin de la ligne, on reviens au début (0) en ajoutant en plus la largeur d'une Brick (30).
-#     if brick_x_placement >= 700:
-#         brick_y_placement += 30
-#         brick_x_placement = 0
-#
-#     liste_brick[i].rect.x = brick_x_placement + liste_brick[i].width
-#     liste_brick[i].rect.y = brick_y_placement
-#
-#     all_sprites_list.add(liste_brick[i])
-#     brick_x_placement += liste_brick[i].width
-#
-#     i += 1
+
 
     #Logo creation
     image = Image("logo.png",700,400)
@@ -89,11 +68,6 @@ def main():
     all_sprites_list.add(image)
 
     CurrentBackground = 1
-# Add the paddle to the list of sprites
-    #all_sprites_list.add(paddle)
-    #all_sprites_list.add(ball)
-
-
     continuer = True
  
 # The clock will be used to control how fast the screen updates
@@ -195,7 +169,7 @@ def main():
 
 def instruction():
 
-     
+
 
      background = pygame.image.load("Images/background.png").convert()
      background = pygame.transform.scale(background, size)
@@ -533,6 +507,9 @@ def custom():
 
         pygame.display.flip()
 
+
+
+
 def game(imageball,background):
     background = pygame.image.load(background).convert()
     background = pygame.transform.scale(background, size)
@@ -547,36 +524,55 @@ def game(imageball,background):
     paddle.rect.y = 560
 
     #Create the ball
-    ball = Ball(imageball,30,30)
+    ball = Ball(imageball,25,25)
     ball.rect.x = 400
-    ball.rect.y = 500
+    ball.rect.y = 250
 
     all_bricks = pygame.sprite.Group()
 
-    for i in range(7):
-        brick = Brick(3, 80, 30)
-        brick.rect.x = 60 + i * 100
+    for i in range(8):
+        brick = Brick(3, 70, 30)
+        brick.rect.x = 20 + i * 100
         brick.rect.y = 60
         all_sprites_list.add(brick)
         all_bricks.add(brick)
-    for i in range(7):
-        brick = Brick(2, 80, 30)
-        brick.rect.x = 60 + i * 100
+
+    for i in range(8):
+        brick = Brick(2, 70, 30)
+        brick.rect.x = 20 + i * 100
         brick.rect.y = 100
         all_sprites_list.add(brick)
         all_bricks.add(brick)
-    for i in range(7):
-        brick = Brick(1, 80, 30)
-        brick.rect.x = 60 + i * 100
+
+    for i in range(8):
+        brick = Brick(1, 70, 30)
+        brick.rect.x = 20 + i * 100
         brick.rect.y = 140
         all_sprites_list.add(brick)
         all_bricks.add(brick)
+
+    #
+    # for i in range(7):
+    #     square = Square(3, 30, 30)
+    #     square.rect.x = 60 + i * 100
+    #     square.rect.y = 190
+    #     all_sprites_list.add(square)
+    #     all_bricks.add(square)
+    #
+    # for i in range(7):
+    #     square = Square(3, 30, 30)
+    #     square.rect.x = 110 + i * 100
+    #     square.rect.y = 190
+    #     all_sprites_list.add(square)
+    #     all_bricks.add(square)
+
+
 
     # Add the paddle to the list of sprites
     all_sprites_list.add(paddle)
     all_sprites_list.add(ball)
     continuer = True
-    
+
     def pause():
         paused = True 
         #Button Jouer
@@ -600,27 +596,26 @@ def game(imageball,background):
             draw_text('REPRENDRE LA PARTIE', menu, (0, 0, 0), screen, 300, 300)
             draw_text('QUITTER LA PARTIE', menu, (0, 0, 0), screen, 300, 400)
             pygame.display.update()
-            clock.tick(5)  
-
-             
-
-
-
+            clock.tick(5)
             #event = pygame.event.wait()
                #     draw_text('PAUSE', menu, (255, 255, 255), screen, 300, 100)
                 #    if event.type == pygame.KEYDOWN and 
-                #        break  # Exit infinite loop 
-
-   
-        
+                #        break  # Exit infinite loop
     pygame.display.flip() 
 
     score = 0
-    lives = 3
-    
+    lives = 50
+
+    liste_pouvoir = []
+    ball_2_active = False
+
+    # pouvoir = Pouvoir()
+    # pouvoir.rect.x = 500
+    # pouvoir.rect.y = 350
+    # all_sprites_list.add(pouvoir)
+
     # -------- Main Program Loop -----------
     while continuer:
-
         if lives == 0:
             continuer = False
         # --- Main event looP
@@ -635,9 +630,7 @@ def game(imageball,background):
 
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
-                #PARA INSERT DATA
                 continuer = False # Flag that we are done so we exit this loop
-
                 # PAUSE
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause()
@@ -649,9 +642,101 @@ def game(imageball,background):
     
        
         # --- Game logic should go here
+
         ball.move()
+
+
+        for pouvoir in liste_pouvoir:
+            if pouvoir.rect.y <= 530:
+                pouvoir.rect.y += POWER_FALLING_SPEED
+            else:
+                liste_pouvoir.pop(liste_pouvoir.index(pouvoir))
+                pouvoir.kill()
+
+            if pygame.sprite.collide_mask(pouvoir, paddle):
+                if pouvoir.rand_pouvoir == 1:
+                    pouvoir.agrandir(paddle)
+                    pouvoir.kill()
+                elif pouvoir.rand_pouvoir == 2:
+                    pouvoir.accelerer(ball)
+                    pouvoir.kill()
+                elif pouvoir.rand_pouvoir == 3:
+                    pouvoir.ralenti(ball)
+                    pouvoir.kill()
+                elif pouvoir.rand_pouvoir == 4:
+                    pouvoir.retrecissement(paddle)
+                    pouvoir.kill()
+                elif pouvoir.rand_pouvoir == 5:
+                    if ball_2_active is False:
+                        ball_2_active = True
+                        extra_ball = Ball(imageball, 25, 25)
+                        extra_ball.rect.x = 400
+                        extra_ball.rect.y = 250
+                        all_sprites_list.add(extra_ball)
+                        pouvoir.kill()
+                elif pouvoir.rand_pouvoir == 6:
+                    pouvoir.laser(paddle)
+                    pouvoir.kill()
+                elif pouvoir.rand_pouvoir == 7:
+                    score = score + 50
+                    pouvoir.kill()
+
+               # elif pouvoir.rand_pouvoir == 5:
+                #elif pouvoir.rand_pouvoir == 6:
+                #elif pouvoir.rand_pouvoir == 7:
+
+        if 'extra_ball' in globals():
+            if extra_ball.lose():
+                extra_ball.kill()
+
+        if ball_2_active:
+            if pygame.sprite.collide_mask(extra_ball, paddle):
+                extra_ball.flip_direction_y()
+            extra_ball.move()
+            extra_ball.leaves_screen()
+
+            element_collision_list = pygame.sprite.spritecollide(extra_ball, all_bricks, False)
+            for element in element_collision_list:
+                ball.flip_direction_y()
+                # ball.flip_direction_x()
+
+                if element.touche():
+                    if isinstance(element, Brick):
+                        score += 100
+                        pouvoir = Pouvoir()
+                        pouvoir.rect.x = element.rect.x
+                        pouvoir.rect.y = element.rect.y
+                        liste_pouvoir.append(pouvoir)
+
+                        # DROP POUVOIR
+
+                        # if hasattr(element, 'pouvoir') and element.pouvoir != 0:
+                        # DROP BONUS
+                        # if hasattr(element, 'bonus') and element.bonus != 0:
+                        #     element.bonus.rect.y = element.rect.y
+                        #     element.bonus.rect.y = element.bonus.rect.y + BONUS_FALLING_SPEED
+                    if isinstance(element, Square):
+                        score += 200
+
+                if len(all_bricks) == 0:
+                    # Display Level Complete Message for 3 seconds
+                    # font = pygame.font.Font(None, 74)
+                    text = font.render("LEVEL COMPLETE", 1, WHITE)
+                    screen.blit(text, (200, 300))
+                    pygame.display.flip()
+                    pygame.time.wait(3000)
+
+                    # Stop the Game
+                    continuer = False
+
+        for pouvoir in liste_pouvoir:
+            all_sprites_list.add(pouvoir)
+
         if pygame.sprite.collide_mask(ball, paddle):
             ball.flip_direction_y()
+
+
+
 
         #if ball.leaves_screen_bottom():
         # reset the ball position
@@ -663,16 +748,21 @@ def game(imageball,background):
           #      ball.flip_direction_x()
         all_sprites_list.update()
         
-         
 
         #Bloque le paddle
         paddle.leaves_screen_sides()
 
         #print(ball.rect.y)
 
+
+
+
         if ball.lose():
-            ball.rect.x = 350
-            ball.rect.y = 200
+            ball.reinitialiser_position()
+            paddle.reinitialiser_position()
+            for pouvoir in liste_pouvoir:
+                pouvoir.kill()
+            liste_pouvoir = []
             ball.move()
 
             while True:  # Infinite loop that will be broken when the user press the space bar again
@@ -681,48 +771,52 @@ def game(imageball,background):
                     break  # Exit infinite loop
 
             lives -= 1
+            ball_2_active = False
 
 
-        if ball.leaves_screen():
-        # reset the ball position
-            ball.rect.x = 200
-            ball.rect.y = 300
+        ball.leaves_screen()
 
         # Check if there is a car collision
-        brick_collision_list = pygame.sprite.spritecollide(ball, all_bricks, False)
-        for brick in brick_collision_list:
+        element_collision_list = pygame.sprite.spritecollide(ball, all_bricks, False)
+        for element in element_collision_list:
             ball.flip_direction_y()
-           # ball.flip_direction_x()
-            score += 1
+            # ball.flip_direction_x()
 
-            if brick.coup <= 0:
-                brick.kill()
-            else:
-                brick.touche()
+            if element.touche():
+                if isinstance(element, Brick):
+                    score += 100
+                    pouvoir = Pouvoir()
+                    pouvoir.rect.x = element.rect.x
+                    pouvoir.rect.y = element.rect.y
+                    liste_pouvoir.append(pouvoir)
+
+                    # DROP POUVOIR
+
+                    #if hasattr(element, 'pouvoir') and element.pouvoir != 0:
+                    # DROP BONUS
+                    # if hasattr(element, 'bonus') and element.bonus != 0:
+                    #     element.bonus.rect.y = element.rect.y
+                    #     element.bonus.rect.y = element.bonus.rect.y + BONUS_FALLING_SPEED
+                if isinstance(element, Square):
+                    score += 200
 
             if len(all_bricks) == 0:
                 # Display Level Complete Message for 3 seconds
                 #font = pygame.font.Font(None, 74)
-                #text = font.render("LEVEL COMPLETE", 1, WHITE)
-                #screen.blit(text, (200, 300))
+                text = font.render("LEVEL COMPLETE", 1, WHITE)
+                screen.blit(text, (200, 300))
                 pygame.display.flip()
                 pygame.time.wait(3000)
 
                 # Stop the Game
                 continuer = False
 
-        # if ball.rect.x >= 760:
-        #     ball.velocity[0] = -ball.velocity[0]
-        # if ball.rect.x <= 0:
-        #     ball.velocity[0] = -ball.velocity[0]
-        # if ball.rect.y > 590:
-        #     ball.velocity[1] = -ball.velocity[1]
-        # if ball.rect.y < 60:
-        #     ball.velocity[1] = -ball.velocity[1]
+
+
 
         # --- Drawing code should go here
-        # First, clear the screen to dark blue. 
-        screen.blit(background, (0,0))
+        # First, clear the screen to dark blue.
+        screen.blit(background, (0, 0))
       
 
         pygame.draw.line(screen, WHITE, [0, 38], [800, 38], 2)
@@ -734,8 +828,10 @@ def game(imageball,background):
         screen.blit(text, (350,10))
         text = font.render("Playtime : 00:01", 1, WHITE)
         screen.blit(text, (600,10))
-    
+
         all_sprites_list.draw(screen)
+
+
 
         # --- Go ahead and update the screen with what we've drawn.
         pygame.display.flip()

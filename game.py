@@ -768,24 +768,24 @@ def game(imageball,background):
     paddle3 = pygame.transform.scale(paddle3, (100,20))
     state = 0
     # -------- Main Program Loop -----------
-    while continuer:
+    #while continuer:
          
-        if(CurrentPaddle==1):
-            paddle.image = paddle1
-        if(CurrentPaddle==2):
-            paddle.image = paddle2
-        if(CurrentPaddle==3):
-            paddle.image = paddle2
+        #if(CurrentPaddle==1):
+         #   paddle.image = paddle1
+        #if(CurrentPaddle==2):
+        #    paddle.image = paddle2
+        #if(CurrentPaddle==3):
+        #    paddle.image = paddle2
             
-        if(CurrentPaddle==3):
-            CurrentPaddle=1
-        else:
-            CurrentPaddle+=1 
+        #if(CurrentPaddle==3):
+        #    CurrentPaddle=1
+        #else:
+        #    CurrentPaddle+=1 
         
         #paddle.rect = paddle.image.get_rect()
 
                 #        break  # Exit infinite loop
-    pygame.display.flip() 
+    #pygame.display.flip() 
 
     score = 0
     lives = 50
@@ -834,9 +834,8 @@ def game(imageball,background):
         if state == 1:
             ball.move()
 
-        if pygame.sprite.collide_mask(ball, paddle) and state==1:
-
-        ball.move()
+        #if pygame.sprite.collide_mask(ball, paddle) and state==1:
+           # ball.move()
 
 
         for pouvoir in liste_pouvoir:
@@ -963,6 +962,7 @@ def game(imageball,background):
             for pouvoir in liste_pouvoir:
                 pouvoir.kill()
             liste_pouvoir = []
+            ball_2_active = False
             #ball.move()
 
             #for event in pygame.event.get():                
@@ -977,12 +977,12 @@ def game(imageball,background):
 
 
 
-        if ball.leaves_screen():
+        #if ball.leaves_screen():
         # reset the ball position
-            ball.rect.x =100
-            ball.rect.y = 100
-            lives -= 1
-            ball_2_active = False
+            #ball.rect.x =100
+            #ball.rect.y = 100
+            #lives -= 1
+            
 
 
         ball.leaves_screen()

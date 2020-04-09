@@ -14,7 +14,7 @@ from Brick import Brick
 
 pygame.init()
 
-
+Music = 'Son/Home.ogg'
 #Colors
 WHITE = (255,255,255)
 DARKBLUE = (36,90,190)
@@ -52,37 +52,42 @@ def draw_text(text, font, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 def main():
+    
+
+    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
+    pygame.mixer.music.load(Music)
+    pygame.mixer.music.play(-1) #-1 means loops for ever, 0 means play just once)
 
     all_sprites_list = pygame.sprite.Group()
-#Create the ball
-#ball = Ball(30,30)
-#ball.rect.x = 400
-#ball.rect.y = 561
-#
-#
-# #Create a list of Brick
-#   liste_brick = []
-# i = 0
-# brick_x_placement = 0
-# brick_y_placement = 60
-# nombre_de_ligne = 5
-#
-# while i < 14*nombre_de_ligne:
-#     liste_brick.append(Brick(3))
-#     #Si on atteint la fin de la ligne, on reviens au début (0) en ajoutant en plus la largeur d'une Brick (30).
-#     if brick_x_placement >= 700:
-#         brick_y_placement += 30
-#         brick_x_placement = 0
-#
-#     liste_brick[i].rect.x = brick_x_placement + liste_brick[i].width
-#     liste_brick[i].rect.y = brick_y_placement
-#
-#     all_sprites_list.add(liste_brick[i])
-#     brick_x_placement += liste_brick[i].width
-#
-#     i += 1
+    #Create the ball
+    #ball = Ball(30,30)
+    #ball.rect.x = 400
+    #ball.rect.y = 561
+    #
+    #
+    # #Create a list of Brick
+    #   liste_brick = []
+    # i = 0
+    # brick_x_placement = 0
+    # brick_y_placement = 60
+    # nombre_de_ligne = 5
+    #
+    # while i < 14*nombre_de_ligne:
+    #     liste_brick.append(Brick(3))
+    #     #Si on atteint la fin de la ligne, on reviens au début (0) en ajoutant en plus la largeur d'une Brick (30).
+    #     if brick_x_placement >= 700:
+    #         brick_y_placement += 30
+    #         brick_x_placement = 0
+    #
+    #     liste_brick[i].rect.x = brick_x_placement + liste_brick[i].width
+    #     liste_brick[i].rect.y = brick_y_placement
+    #
+    #     all_sprites_list.add(liste_brick[i])
+    #     brick_x_placement += liste_brick[i].width
+    #
+    #     i += 1
 
-    #Logo creation
+        #Logo creation
     image = Image("logo.png",700,400)
     image.rect.x = 50
     image.rect.y = 0
@@ -146,13 +151,13 @@ def main():
             screen.blit(instruction_selected, instruction_pos)
 
             #Button Stat
-            stat_selected = menu.render('Stats', 1, (255, 255, 255))
+            stat_selected = menu.render('Classement', 1, (255, 255, 255))
             stat_pos = stat_selected.get_rect()
             stat_pos.topleft = (340, 440)
             screen.blit(stat_selected, stat_pos)
 
             #Button About
-            about_selected = menu.render('A propos', 1, (255, 255, 255))
+            about_selected = menu.render('Bonus', 1, (255, 255, 255))
             about_pos = about_selected.get_rect()
             about_pos.topleft = (340, 490)
             screen.blit(about_selected, about_pos)
@@ -167,7 +172,7 @@ def main():
             for event in pygame.event.get():
                 pos = pygame.mouse.get_pos()
                 if event.type == QUIT:
-                    continuer = False
+                    pygame.quit()
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         pygame.quit()
@@ -184,6 +189,8 @@ def main():
                         about()
                     if quit_pos.collidepoint(x,y):
                         continuer = False
+                        pygame.quit()
+
             
             clock.tick(5)
 
@@ -272,37 +279,37 @@ def instruction():
      itemagrandi = Image("Images/PNG/itemagrandi.png",100,25)
      itemagrandi.rect.x = 50
      itemagrandi.rect.y = 290
-     text = text_instruction.render("Si votre paddle touche cet item, la taille du paddle augmente.", 1, (255, 255, 255))
+     text = text_instruction.render("Si votre plateforme touche cet item, la taille de la plateforme augmente.", 1, (255, 255, 255))
      screen.blit(text, (200,300))
 
      itemretreci = Image("Images/PNG/itemretreci.png",100,25)
      itemretreci.rect.x = 50
      itemretreci.rect.y = 340
-     text = text_instruction.render("Si votre paddle touche cet item, la taille du paddle retreci.", 1, (255, 255, 255))
+     text = text_instruction.render("Si votre plateforme touche cet item, la taille de la plateforme retreci.", 1, (255, 255, 255))
      screen.blit(text, (200,350))
 
      itemfast = Image("Images/PNG/itemfast.png",100,25)
      itemfast.rect.x = 50
      itemfast.rect.y = 390
-     text = text_instruction.render("Si votre paddle touche cet item, la vitesse de la balle augmente.", 1, (255, 255, 255))
+     text = text_instruction.render("Si votre plateforme touche cet item, la vitesse de la balle augmente.", 1, (255, 255, 255))
      screen.blit(text, (200,400))
 
      itemslow = Image("Images/PNG/itemslow.png",100,25)
      itemslow.rect.x = 50
      itemslow.rect.y = 440
-     text = text_instruction.render("Si votre paddle touche cet item, la vitesse du paddle retreci.", 1, (255, 255, 255))
+     text = text_instruction.render("Si votre plateforme touche cet item, la vitesse de la plateforme est reduit.", 1, (255, 255, 255))
      screen.blit(text, (200,450))
 
      itemlaser = Image("Images/PNG/itemlaser.png",100,25)
      itemlaser.rect.x = 50
      itemlaser.rect.y = 490
-     text = text_instruction.render("Si votre paddle touche cet item, des lasers pouvant briser les briques sont ajoutes au paddle.", 1, (255, 255, 255))
+     text = text_instruction.render("Si votre plateforme touche cet item, des lasers pouvant briser les briques sont ajoutes a la plateforme.", 1, (255, 255, 255))
      screen.blit(text, (200,500))
 
      itemaddball = Image("Images/PNG/itemaddball.png",100,25)
      itemaddball.rect.x = 50
      itemaddball.rect.y = 540
-     text = text_instruction.render("Si votre paddle touche cet item, une balle supplementaire est ajoutee a l'ecran.", 1, (255, 255, 255))
+     text = text_instruction.render("Si votre plateforme touche cet item, une balle supplementaire est ajoutee a l'ecran.", 1, (255, 255, 255))
      screen.blit(text, (200,550))
 
      all_item_list.add(keyright,keyleft,itemaddball,itemagrandi,itemfast,itemslow,itemlaser,itemretreci,live,brique,capsule,demi)
@@ -346,7 +353,9 @@ def stat():
      screen.blit(background, (0,0))
 
      #TITLE
-     draw_text('Mes statistiques', menu, (255, 255, 255), screen, 300, 30)
+     draw_text('Classement', menu, (255, 255, 255), screen, 300, 30)
+     draw_text('des meilleurs joueurs', menu, (255, 255, 255), screen, 260, 70)
+
 
      continuer = True
 
@@ -382,7 +391,24 @@ def about():
 
      continuer = True
      #TITLE
-     draw_text('A propos de Brick Breaker', menu, (255, 255, 255), screen, 200, 30)
+     draw_text('Bonus', menu, (255, 255, 255), screen, 200, 30)
+     draw_text('Ici, vous pouvez modifier les parametres de la balle et de la plateforme ', font, (255, 255, 255), screen, 100, 100)
+     draw_text('en echange de quelques credits.', font, (255, 255, 255), screen, 100, 125)
+     draw_text('Vitesse de la balle : ', font, (255, 255, 255), screen, 100, 200)
+     draw_text('Vitesse de la plateforme ', font, (255, 255, 255), screen, 100, 300)
+     draw_text('Lent', menu, (255, 255, 255), screen, 300, 200)
+     draw_text('Normal', menu, (255, 255, 255), screen, 400, 200)
+     draw_text('Rapide', menu, (255, 255, 255), screen, 530, 200)
+     draw_text('Lent', menu, (255, 255, 255), screen, 300, 300)
+     draw_text('Normal ', menu, (255, 255, 255), screen, 400, 300)
+     draw_text('Rapide', menu, (255, 255, 255), screen, 530, 300)
+     draw_text('Credit en poche: 3 (ici variable à rajouter)', menu, (255, 255, 255), screen, 400, 500)
+
+     
+
+
+
+
 
 
      while continuer: 
@@ -534,22 +560,28 @@ def custom():
         pygame.display.flip()
 
 def game(imageball,background):
+    Music = 'Son/game.ogg'
+    pygame.mixer.music.load(Music)
+    pygame.mixer.music.play(-1)
     backgroundGame = pygame.image.load(background).convert()
     backgroundGame = pygame.transform.scale(backgroundGame, size)
-
-
+    
+  
+    CurrentPaddle = 1
     #This will be a list that will contain all the sprites we intend to use in our game.
     all_sprites_list = pygame.sprite.Group()
 
     #Create the Paddle
-    paddle = Paddle(100, 20)
+
+    paddle = Paddle(100, 30)
     paddle.rect.x = 350
     paddle.rect.y = 560
 
     #Create the ball
     ball = Ball(imageball,30,30)
     ball.rect.x = 400
-    ball.rect.y = 500
+    ball.rect.y = 200
+    
 
     all_bricks = pygame.sprite.Group()
 
@@ -579,7 +611,7 @@ def game(imageball,background):
     
     def pause():
         paused = True 
-            
+        pygame.mixer.music.pause()
         while paused:
           
 
@@ -589,7 +621,9 @@ def game(imageball,background):
                     pygame.quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
+                        pygame.mixer.music.unpause()
                         paused = False
+
                 if event.type == MOUSEBUTTONDOWN:
             # Set the x, y postions of the mouse click
                     x, y = event.pos
@@ -598,6 +632,7 @@ def game(imageball,background):
                         paused = False
                         main()
                     if resumerect.collidepoint(x,y):
+                        pygame.mixer.music.unpause()
                         paused = False
 
             test = pygame.Surface((800,600), pygame.SRCALPHA) 
@@ -630,6 +665,9 @@ def game(imageball,background):
                 #        break  # Exit infinite loop 
 
     def congratulation(imageball,background,score,nbcoup,lives):
+        Music = 'Son/Success.ogg'
+        pygame.mixer.music.load(Music)
+        pygame.mixer.music.play(0)
         continuer = True 
         backgroundEnd = pygame.image.load("Images/ending.png").convert()
         backgroundEnd = pygame.transform.scale(backgroundEnd, size)
@@ -660,6 +698,8 @@ def game(imageball,background):
 
 
             draw_text('Classement', font, (255, 255, 255), screen, 100, 200)
+            draw_text('Mes 5 dernieres parties', font, (255, 255, 255), screen, 400, 200)
+
 
 
             tryagain = font.render('REJOUER UNE PARTIE', 1, (255, 255, 255))
@@ -677,6 +717,9 @@ def game(imageball,background):
 
 
     def gameover(imageball,background):
+        Music = 'Son/Gameover.ogg'
+        pygame.mixer.music.load(Music)
+        pygame.mixer.music.play(0)
         continuer = True 
         backgroundEnd = pygame.image.load("Images/gameover.png").convert()
         backgroundEnd = pygame.transform.scale(backgroundEnd, size)
@@ -727,9 +770,29 @@ def game(imageball,background):
     score = 0
     lives = 3
     nbcoup = 0
-    
+    paddle1 = pygame.image.load("Images/PNG/50-Breakout-Tiles.png").convert_alpha()
+    paddle2 = pygame.image.load("Images/PNG/51-Breakout-Tiles.png").convert_alpha()
+    paddle3 = pygame.image.load("Images/PNG/52-Breakout-Tiles.png").convert_alpha()
+    paddle1 = pygame.transform.scale(paddle1, (100,20))
+    paddle2 = pygame.transform.scale(paddle2, (100,20))
+    paddle3 = pygame.transform.scale(paddle3, (100,20))
+    state = 0
     # -------- Main Program Loop -----------
     while continuer:
+         
+        if(CurrentPaddle==1):
+            paddle.image = paddle1
+        if(CurrentPaddle==2):
+            paddle.image = paddle2
+        if(CurrentPaddle==3):
+            paddle.image = paddle2
+            
+        if(CurrentPaddle==3):
+            CurrentPaddle=1
+        else:
+            CurrentPaddle+=1 
+        
+        #paddle.rect = paddle.image.get_rect()
 
         if lives == 0:
             continuer = False
@@ -750,7 +813,7 @@ def game(imageball,background):
                 continuer = False # Flag that we are done so we exit this loop
 
                 # PAUSE
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and state == 1:
                 pause()
                 #while True:  # Infinite loop that will be broken when the user press the space bar again
                     #event = pygame.event.wait()
@@ -760,11 +823,18 @@ def game(imageball,background):
     
        
         # --- Game logic should go here
-        ball.move()
+        #ball.move()
+        if keys[pygame.K_SPACE] and state == 0:
+            state = 1
+            ball.move()
+        if state == 1:
+            ball.move()
 
-        if pygame.sprite.collide_mask(ball, paddle):
+        if pygame.sprite.collide_mask(ball, paddle) and state==1:
             ball.flip_direction_y()
             nbcoup +=1
+            effect = pygame.mixer.Sound('Son/paddle_hit.wav')
+            effect.play()
 
         #if ball.leaves_screen_bottom():
         # reset the ball position
@@ -785,21 +855,26 @@ def game(imageball,background):
 
         if ball.lose():
             lives -= 1
-            ball.rect.x = 350
+            ball.rect.x = 400
             ball.rect.y = 200
-            ball.move()
+            state = 0
 
-            while True:  # Infinite loop that will be broken when the user press the space bar again
-                event = pygame.event.wait()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    break  # Exit infinite loop
+            #for event in pygame.event.get():                
+             #   if event.type == pygame.KEYDOWN:
+              #      if event.key == pygame.K_SPACE:
+               #         ball.move()
+
+           # while True:  # Infinite loop that will be broken when the user press the space bar again
+            #    event = pygame.event.wait()
+             #   if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+              #     break  # Exit infinite loop
 
 
 
         if ball.leaves_screen():
         # reset the ball position
-            ball.rect.x = 200
-            ball.rect.y = 300
+            ball.rect.x =100
+            ball.rect.y = 100
 
         # Check if there is a car collision
         brick_collision_list = pygame.sprite.spritecollide(ball, all_bricks, False)
@@ -807,9 +882,14 @@ def game(imageball,background):
             ball.flip_direction_y()
            # ball.flip_direction_x()
             score += 1
+            effect = pygame.mixer.Sound('Son/block_break.wav')
+            effect.play()
+            
 
             if brick.coup <= 0:
+                
                 brick.kill()
+                
             else:
                 brick.touche()
 
@@ -847,14 +927,19 @@ def game(imageball,background):
         screen.blit(text, (350,10))
         text = font.render("Playtime : 00:01", 1, WHITE)
         screen.blit(text, (600,10))
-    
+        #reset
+        if state == 0:
+            draw_text("Appuyer sur la barre d'espace", menu, (255, 255, 255), screen, 100, 300)
+            draw_text("- pour lancer la balle", menu, (255, 255, 255), screen, 100, 400)
+            draw_text("- ou mettre pause", menu, (255, 255, 255), screen, 100, 400)
+            ball.rect.x = 400
+            ball.rect.y = 200
         all_sprites_list.draw(screen)
 
         # --- Go ahead and update the screen with what we've drawn.
         pygame.display.flip()
-        
         # --- Limit to 60 frames per second
-        clock.tick(60)
+        clock.tick(40)
 
 
  

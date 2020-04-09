@@ -794,12 +794,15 @@ def game(imageball,background):
     ball_2_active = False
     agrandi_active = False
     retreci_active = False
-
+    laser_active = False
+    laser = False
 
     #Countdown pouvoir 
-    agrandissement = 1000
-    retreci_count = 1000
-    extraball_count = 100
+    agrandissement = 500
+    retreci_count = 500
+    extraball_count = 500
+    laser_count = 500
+   
 
     # pouvoir = Pouvoir()
     # pouvoir.rect.x = 500
@@ -820,7 +823,8 @@ def game(imageball,background):
             paddle.move_right()
 
         #all_sprites_list.update()
-
+        for pouvoir in liste_pouvoir:
+            all_sprites_list.add(pouvoir)
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
                 continuer = False # Flag that we are done so we exit this loop
@@ -857,7 +861,7 @@ def game(imageball,background):
                 if pouvoir.rand_pouvoir == 1:
                     pouvoir.agrandir(paddle)
                     agrandi_active = True
-                    agrandissement = 1000
+                    agrandissement = 500
                     pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 2:
                     pouvoir.accelerer(ball)
@@ -868,12 +872,12 @@ def game(imageball,background):
                 elif pouvoir.rand_pouvoir == 4:
                     pouvoir.retrecissement(paddle)
                     retreci_active = True
-                    retreci_count = 1000
+                    retreci_count = 500
                     pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 5:
                     if ball_2_active is False:
                         ball_2_active = True
-                        extraball_count = 100
+                        extraball_count = 500
                         extra_ball = Ball(imageball, 25, 25)
                         extra_ball.rect.x = 400
                         extra_ball.rect.y = 250
@@ -881,6 +885,12 @@ def game(imageball,background):
                         pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 6:
                     pouvoir.laser(paddle)
+                    laser_left = Image("Images/PNG/61-Breakout-Tiles.png",10,10)
+                    laser_right = Image("Images/PNG/61-Breakout-Tiles.png",10,10)
+                    all_sprites_list.add(laser_left)
+                    all_sprites_list.add(laser_right)
+                    laser_active = True
+                    laser_count = 500
                     pouvoir.kill()
                 elif pouvoir.rand_pouvoir == 7:
                     score = score + 50
@@ -889,7 +899,100 @@ def game(imageball,background):
                # elif pouvoir.rand_pouvoir == 5:
                 #elif pouvoir.rand_pouvoir == 6:
                 #elif pouvoir.rand_pouvoir == 7:
+        if laser_active:
+            if ball.lose():
+                laser_right.kill()
+                laser_left.kill()
 
+            if laser_count == 0:
+                paddle.image = pygame.image.load("Images/50-Breakout-Tiles.png").convert_alpha()
+                paddle.image = pygame.transform.scale(paddle.image, (100,30)) 
+                laser_active = False
+                laser_right.kil()
+                laser_left.kill()
+
+
+            if laser is False:
+                laser_right.rect.x = paddle.rect.x+100
+                laser_right.rect.y = paddle.rect.y
+                laser_left.rect.x = paddle.rect.x
+                laser_left.rect.y = paddle.rect.y
+                laser=True
+            else:
+                laser_right.rect.y -= 1
+                laser_left.rect.y -= 1
+            if laser_right.rect.y < 0 or laser_left.rect.y < 0:
+                laser_right.rect.x = paddle.rect.x+100
+                laser_right.rect.y = paddle.rect.y
+                laser_left.rect.x = paddle.rect.x
+                laser_left.rect.y = paddle.rect.y
+                laser = True
+            else:
+                laser_right.rect.y -= 1
+                laser_left.rect.y -= 1
+            
+            element_collision_list = pygame.sprite.spritecollide(laser_right, all_bricks, False)
+            
+            for element in element_collision_list:
+
+                if element.touche():
+                    laser_right.rect.x = paddle.rect.x+100
+                    laser_right.rect.y = paddle.rect.y
+                    if isinstance(element, Brick):
+                        score += 100
+                        pouvoir = Pouvoir()
+                        pouvoir.rect.x = element.rect.x
+                        pouvoir.rect.y = element.rect.y
+                        liste_pouvoir.append(pouvoir)
+
+                            # DROP POUVOIR
+
+                            # if hasattr(element, 'pouvoir') and element.pouvoir != 0:
+                            # DROP BONUS
+                            # if hasattr(element, 'bonus') and element.bonus != 0:
+                            #     element.bonus.rect.y = element.rect.y
+                            #     element.bonus.rect.y = element.bonus.rect.y + BONUS_FALLING_SPEED
+                    if isinstance(element, Square):
+                        score += 200
+
+                if len(all_bricks) == 0:
+                    congratulation(imageball,background,score,nbcoup,lives)
+
+            element_collision_list = pygame.sprite.spritecollide(laser_left, all_bricks, False)
+                
+            for element in element_collision_list:
+
+                if element.touche():
+                    laser_left.rect.x = paddle.rect.x
+                    laser_left.rect.y = paddle.rect.y
+                    if isinstance(element, Brick):
+                        score += 100
+                        pouvoir = Pouvoir()
+                        pouvoir.rect.x = element.rect.x
+                        pouvoir.rect.y = element.rect.y
+                        liste_pouvoir.append(pouvoir)
+
+                            # DROP POUVOIR
+
+                            # if hasattr(element, 'pouvoir') and element.pouvoir != 0:
+                            # DROP BONUS
+                            # if hasattr(element, 'bonus') and element.bonus != 0:
+                            #     element.bonus.rect.y = element.rect.y
+                            #     element.bonus.rect.y = element.bonus.rect.y + BONUS_FALLING_SPEED
+                    if isinstance(element, Square):
+                        score += 200
+
+                if len(all_bricks) == 0:
+                    congratulation(imageball,background,score,nbcoup,lives)
+                laser_count -=1
+                
+
+            
+
+            if laser_count == 0:
+                laser_right.kill()
+                laser_left.kill()
+                laser_active = False
         if 'extra_ball' in globals():
             if extra_ball.lose():
                 extra_ball.kill()
@@ -912,7 +1015,7 @@ def game(imageball,background):
             extraball_count -= 1
             extra_ball.leaves_screen()
             if extraball_count == 0:
-                ball_2_active == False
+                ball_2_active = False
                 extra_ball.kill()
 
 
@@ -940,18 +1043,7 @@ def game(imageball,background):
                         score += 200
 
                 if len(all_bricks) == 0:
-                    # Display Level Complete Message for 3 seconds
-                    # font = pygame.font.Font(None, 74)
-                    text = font.render("LEVEL COMPLETE", 1, WHITE)
-                    screen.blit(text, (200, 300))
-                    pygame.display.flip()
-                    pygame.time.wait(3000)
-
-                    # Stop the Game
-                    continuer = False
-
-        for pouvoir in liste_pouvoir:
-            all_sprites_list.add(pouvoir)
+                   congratulation(imageball,background,score,nbcoup,lives)
 
         if pygame.sprite.collide_mask(ball, paddle):
             ball.flip_direction_y()
@@ -993,7 +1085,9 @@ def game(imageball,background):
             liste_pouvoir = []
             ball_2_active = False
             paddle.image = pygame.image.load("Images/50-Breakout-Tiles.png").convert_alpha()
-            paddle.image = pygame.transform.scale(paddle.image, (100,30))  
+            paddle.image = pygame.transform.scale(paddle.image, (100,30)) 
+            
+
             #ball.move()
 
             #for event in pygame.event.get():                

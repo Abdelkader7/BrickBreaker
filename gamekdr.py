@@ -1,10 +1,7 @@
 # Import the pygame library and initialise the game engine
 import pygame
-import pymysql
-import time
 from pygame.locals import *
 
-from datetime import datetime
 from Paddle import Paddle
 from Ball import Ball
 from Image import Image
@@ -18,43 +15,6 @@ clock = pygame.time.Clock()
 from Brick import Brick
 
 pygame.init()
-
-#pymsql
-dbServerName    = "127.0.0.1"
-dbUser          = "root"
-dbPassword      = ""
-dbName          = "brickbreaker"
-charSet         = "utf8mb4"
-db1 = pymysql.connect(host=dbServerName,user=dbUser,passwd=dbPassword, charset=charSet)
-
-
-# Create a cursor object
-cursorObject            = db1.cursor()                                     
-
-    # SQL string to create a MySQL table
-sqlCreateDB   = "CREATE DATABASE IF NOT EXISTS brickbreaker"
-
-    # Execute the sqlQuery
-    
-cursorObject.execute(sqlCreateDB)
-
-
-connectionObject   = pymysql.connect(host=dbServerName, user=dbUser, password=dbPassword,db=dbName, charset=charSet)
-
-    # Create a cursor object
-cursorObject            = connectionObject.cursor()                                     
-
-    # SQL string to create a MySQL table
-sqlCreateTablePlayer   = "CREATE TABLE IF NOT EXISTS player(id_player int(11) AUTO_INCREMENT PRIMARY KEY, id_partie int(11), player_name varchar(32),ball_pref varchar(32), background_pref varchar(32), last_date DATE, bonus_vies int)"
-sqlCreateTablePartie   = "CREATE TABLE IF NOT EXISTS partie(id_partie int(11) AUTO_INCREMENT PRIMARY KEY, id_player int(11), partie_date DATE, spend_time int, score int, lives int, ball_speed int, paddle_speed int, nombre_coups int)"
-
-    # Execute the sqlQuery
-cursorObject.execute(sqlCreateTablePlayer)
-cursorObject.execute(sqlCreateTablePartie)
-
-
-#pymsql vars
-currentDate= datetime.now().strftime('%Y-%m-%d')
 
 Music = 'Son/Home.ogg'
 #Colors
@@ -370,50 +330,6 @@ def stat():
      draw_text('Classement', menu, (255, 255, 255), screen, 300, 30)
      draw_text('des meilleurs joueurs', menu, (255, 255, 255), screen, 260, 70)
 
-     sql = "SELECT player_name,score,lives,nombre_coups FROM `player` LEFT JOIN partie ON player.id_partie=partie.id_partie ORDER BY `partie`.`score` DESC,player.id_partie ASC   LIMIT 10"
-     cursorObject.execute(sql)
-     result = cursorObject.fetchall()
-     text_instruction = pygame.font.Font("miami.ttf", 20)
-     text=[]
-     for i in result:
-        text.append(i)
- 
-    
-     win = screen
-     nb_cases_cote= 10
-     nb_cases_cote2= 5
-     taille_case = 1000/ nb_cases_cote # min renvoie la valeur minimale d'une liste, ici la dimension de la fenêtre
-    
-     titre=0
-     rang=1
-     for k in range(len(text)):
-        tp = text[k]
-        for x in range(nb_cases_cote2): 
-                   
-                pygame.draw.line(screen, WHITE, [200, 200], [700, 200], 2)
-                pygame.draw.line(screen, WHITE, [200, 300], [700, 300], 2)
-                pygame.draw.line(screen, WHITE, [200, 400], [700, 400], 2)
-                pygame.draw.line(screen, WHITE, [200, 500], [700, 500], 2)
-
-                lettre = text_instruction.render(str(rang), True, [255]*3) # on crée la lettre
-                lettre1 = text_instruction.render(tp[0], True, [255]*3)
-                lettre2 = text_instruction.render(str(tp[1]), True, [255]*3)
-                lettre3 = text_instruction.render(str(tp[2]), True, [255]*3)
-                lettre4 = text_instruction.render(str(tp[3]), True, [255]*3)
-                lettre_rect = lettre.get_rect() # je recupere le rect
-                lettre_rect.center = [200+x*taille_case +1/2*taille_case, 100+k*taille_case + 1/2*taille_case] # je place le centre du rect au milieu de la case
-                if x==0:
-                   screen.blit( lettre, lettre_rect ) # on blit le tout
-                if x==1:
-                    screen.blit( lettre1, lettre_rect ) # on blit le tout
-                if x==2:
-                    screen.blit( lettre2, lettre_rect ) # on blit le tout
-                if x==3:
-                    screen.blit( lettre3, lettre_rect ) # on blit le tout
-                if x==4:
-                    screen.blit( lettre4, lettre_rect ) # on blit le tout
-
-        rang+=1
 
      continuer = True
 
@@ -494,14 +410,13 @@ def about():
         pygame.display.flip()
 
 def custom():
-     background=0
-     backgroun = "Images/background.png"
-     Loadbackground = pygame.image.load(backgroun).convert()
+     background = "Images/background.png"
+     Loadbackground = pygame.image.load(background).convert()
      Loadbackground = pygame.transform.scale(Loadbackground, size)
      screen.blit(Loadbackground, (0,0))
      all_custom_list = pygame.sprite.Group()
 
-     imageball=0
+     imageball="Images/PNG/58-Breakout-Tiles.png"
 
      #input
      username = TextBox(300, 110, 200, 24, 24, 20, False)
@@ -602,34 +517,8 @@ def custom():
                 if cancelrect.collidepoint(x,y):
                     continuer = False
                 if playrect.collidepoint(x,y) and (len(username.text)>0) :
-                    bonusVies= 3
-                    sql = "SELECT id_player,id_partie,background_pref,ball_pref,bonus_vies FROM player  WHERE player_name = %s"
-                    val = (username.text)
-                    cursorObject.execute(sql, val)
-                    if cursorObject.rowcount>0:
-                        result = cursorObject.fetchone() 
-                        if background==0:
-                            background=result[2]
-                        if imageball==0:
-                            imageball=result[3]
-                        bestGame = result[1]
-                        idPlayer = result[0]
-                        bonusVies= result[4]
-                        sql = "UPDATE player SET ball_pref= %s, background_pref= %s, last_date= %s WHERE player_name = %s"
-                        val = (imageball,background,currentDate,username.text)
-                        cursorObject.execute(sql, val)
-                    else:
-                        if background==0:
-                            background="Images/background.png"
-                        if imageball==0:
-                            imageball="Images/PNG/58-Breakout-Tiles.png"
-                        bestGame=0
-                        sql = "INSERT INTO player ( id_partie, player_name , ball_pref, background_pref, last_date,bonus_vies ) VALUES (%s, %s, %s , %s, %s, %s)"
-                        val = (0,username.text, imageball,background,currentDate,bonusVies)
-                        cursorObject.execute(sql, val)
-                        idPlayer=cursorObject.lastrowid
                     continuer = False
-                    game(imageball,background,idPlayer,bestGame,bonusVies)
+                    game(imageball,background)
                     
                 
         for textbox in textboxes:
@@ -647,9 +536,7 @@ def custom():
 
 
 
-def game(imageball,background,idPlayer,bestGame,bonusVies):
-
-    start_time =  time.time()
+def game(imageball,background):
     Music = 'Son/game.ogg'
     pygame.mixer.music.load(Music)
     pygame.mixer.music.play(-1)
@@ -767,43 +654,13 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
                 #    if event.type == pygame.KEYDOWN and 
                 #        break  # Exit infinite loop 
 
-    def congratulation(imageball,background,score,nbcoup,lives,ball_speed,spendTime,idPlayer,bestGame):
+    def congratulation(imageball,background,score,nbcoup,lives):
         Music = 'Son/Success.ogg'
         pygame.mixer.music.load(Music)
         pygame.mixer.music.play(0)
         continuer = True 
         backgroundEnd = pygame.image.load("Images/ending.png").convert()
         backgroundEnd = pygame.transform.scale(backgroundEnd, size)
-        bonus=(lives-3)
-        if bonus >=1:
-            sql = "UPDATE player SET bonus_vies= %s WHERE id_player = %s"
-            val = (bonus,idPlayer)
-            cursorObject.execute(sql, val)
-        elif bonus<0:
-            bonus=0
-            sql = "UPDATE player SET bonus_vies= %s WHERE id_player = %s"
-            val = (bonus,idPlayer)
-            cursorObject.execute(sql, val)
-        sql = "INSERT INTO partie ( id_player, partie_date, spend_time, score, lives, ball_speed, paddle_speed, nombre_coups ) VALUES (%s, %s, %s , %s, %s, %s, %s, %s)"
-        val = (idPlayer, currentDate, spendTime, score, lives,ball_speed ,11,nbcoup)
-        cursorObject.execute(sql, val)
-        lastGame=cursorObject.lastrowid
-        if(bestGame!=0):
-            sql = "SELECT score FROM partie  WHERE id_player = %s"
-            val = (idPlayer)
-            cursorObject.execute(sql, val)
-            result = cursorObject.fetchone()
-            bestScore = result[0]
-            if bestScore<score:
-                sql = "UPDATE player SET id_partie= %s WHERE id_player = %s"
-                val = (lastGame,idPlayer)
-                cursorObject.execute(sql, val)
-        else:
-            sql = "UPDATE player SET id_partie= %s WHERE id_player = %s"
-            val = (lastGame,idPlayer)
-            cursorObject.execute(sql, val)
-
-
         while continuer:       
             screen.blit(backgroundEnd, (0,0))
 
@@ -820,101 +677,18 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
                         main()
                     if tryagainrect.collidepoint(x,y):
                         continuer = False
-                        game(imageball,background,idPlayer,bestGame,bonus)
+                        game(imageball,background)
 
            
             draw_text('FELICITATION !', menu, (255, 255, 255), screen, 200, 50)
             draw_text(("Vous avez gagne en "+ str(nbcoup) +" coups avec un score de "+ str(score) +" points "), font, (255, 255, 255),screen, 200, 100)
             
-            draw_text('et en seulement'+str(spendTime)+' secondes ! ', font, (255, 255, 255), screen, 200, 130)
+            draw_text('et en seulement X temps ! ', font, (255, 255, 255), screen, 200, 130)
             draw_text('Vies restantes = '+ str(lives), font, (255, 255, 255), screen, 200, 160)
 
 
             draw_text('Classement', font, (255, 255, 255), screen, 100, 200)
-            sql = "SELECT player_name,score,nombre_coups FROM `player` LEFT JOIN partie ON player.id_partie=partie.id_partie ORDER BY `partie`.`score` DESC,player.id_partie ASC   LIMIT 3"
-            cursorObject.execute(sql)
-            result = cursorObject.fetchall()
-            text_instruction = pygame.font.Font("miami.ttf", 20)
-            text=[]
-            for i in result:
-                text.append(i)
- 
-    
-            win = screen
-            nb_cases_cote= 5
-            nb_cases_cote2= 4
-            taille_case = 400/ nb_cases_cote # min renvoie la valeur minimale d'une liste, ici la dimension de la fenêtre
-    
-            titre=0
-            rang=1
-            for k in range(len(text)):
-                tp = text[k]
-                for x in range(nb_cases_cote2): 
-                   
-                    pygame.draw.line(screen, WHITE, [100, 300], [350, 300], 2)
-                    pygame.draw.line(screen, WHITE, [100, 400], [350, 400], 2)
-                   
-
-                    lettre = text_instruction.render(str(rang), True, [255]*3) # on crée la lettre
-                    lettre1 = text_instruction.render(tp[0], True, [255]*3)
-                    lettre2 = text_instruction.render(str(tp[1]), True, [255]*3)
-                    lettre3 = text_instruction.render(str(tp[2]), True, [255]*3)
-                    
-                    lettre_rect = lettre.get_rect() # je recupere le rect
-                    lettre_rect.center = [50+x*taille_case +1/2*taille_case, 250+k*taille_case + 1/2*taille_case] # je place le centre du rect au milieu de la case
-                    if x==0:
-                        screen.blit( lettre, lettre_rect ) # on blit le tout
-                    if x==1:
-                        screen.blit( lettre1, lettre_rect ) # on blit le tout
-                    if x==2:
-                        screen.blit( lettre2, lettre_rect ) # on blit le tout
-                    if x==3:
-                        screen.blit( lettre3, lettre_rect ) # on blit le tout
-
-                rang+=1
-            draw_text('Mes 3 meilleurs parties', font, (255, 255, 255), screen, 450, 200)
-            sql = "SELECT score,lives,nombre_coups FROM `partie` Where id_player=%s ORDER BY score DESC,lives DESC,nombre_coups ASC LIMIT 3"
-            val = (idPlayer)
-            cursorObject.execute(sql, val)
-            result = cursorObject.fetchall()
-            text_instruction = pygame.font.Font("miami.ttf", 20)
-            text=[]
-            for i in result:
-                text.append(i)
- 
-    
-            win = screen
-            nb_cases_cote= 5
-            nb_cases_cote2= 4
-            taille_case = 400/ nb_cases_cote # min renvoie la valeur minimale d'une liste, ici la dimension de la fenêtre
-    
-            titre=0
-            rang=1
-            for k in range(len(text)):
-                tp = text[k]
-                for x in range(nb_cases_cote2): 
-                   
-                    pygame.draw.line(screen, WHITE, [450, 300], [700, 300], 2)
-                    pygame.draw.line(screen, WHITE, [450, 400], [700, 400], 2)
-                   
-
-                    lettre = text_instruction.render(str(rang), True, [255]*3) # on crée la lettre
-                    lettre1 = text_instruction.render(str(tp[0]), True, [255]*3)
-                    lettre2 = text_instruction.render(str(tp[1]), True, [255]*3)
-                    lettre3 = text_instruction.render(str(tp[2]), True, [255]*3)
-                    
-                    lettre_rect = lettre.get_rect() # je recupere le rect
-                    lettre_rect.center = [425+x*taille_case +1/2*taille_case, 250+k*taille_case + 1/2*taille_case] # je place le centre du rect au milieu de la case
-                    if x==0:
-                        screen.blit( lettre, lettre_rect ) # on blit le tout
-                    if x==1:
-                        screen.blit( lettre1, lettre_rect ) # on blit le tout
-                    if x==2:
-                        screen.blit( lettre2, lettre_rect ) # on blit le tout
-                    if x==3:
-                        screen.blit( lettre3, lettre_rect ) # on blit le tout
-
-                rang+=1
+            draw_text('Mes 5 dernieres parties', font, (255, 255, 255), screen, 400, 200)
 
 
 
@@ -932,42 +706,14 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
             clock.tick(5)  
 
 
-    def gameover(imageball,background,score,nbcoup,lives,spendTime,ball_speed,idPlayer,bestGame):
+    def gameover(imageball,background):
         Music = 'Son/Gameover.ogg'
         pygame.mixer.music.load(Music)
         pygame.mixer.music.play(0)
         continuer = True 
         backgroundEnd = pygame.image.load("Images/gameover.png").convert()
         backgroundEnd = pygame.transform.scale(backgroundEnd, size)
-        bonus=(lives-3)
-        if bonus >=1:
-            sql = "UPDATE player SET bonus_vies= %s WHERE id_player = %s"
-            val = (bonus,idPlayer)
-            cursorObject.execute(sql, val)
-        elif bonus<0:
-            bonus=0
-            sql = "UPDATE player SET bonus_vies= %s WHERE id_player = %s"
-            val = (bonus,idPlayer)
-            cursorObject.execute(sql, val)
 
-        sql = "INSERT INTO partie ( id_player, partie_date, spend_time, score, lives, ball_speed, paddle_speed, nombre_coups ) VALUES (%s, %s, %s , %s, %s, %s, %s, %s)"
-        val = (idPlayer, currentDate, spendTime, score, lives,ball_speed ,11,nbcoup)
-        cursorObject.execute(sql, val)
-        lastGame=cursorObject.lastrowid
-        if(bestGame!=0):
-            sql = "SELECT score FROM partie  WHERE id_player = %s"
-            val = (idPlayer)
-            cursorObject.execute(sql, val)
-            result = cursorObject.fetchone()
-            bestScore = result[0]
-            if bestScore<score:
-                sql = "UPDATE player SET id_partie= %s WHERE id_player = %s"
-                val = (lastGame,idPlayer)
-                cursorObject.execute(sql, val)
-        else:
-            sql = "UPDATE player SET id_partie= %s WHERE id_player = %s"
-            val = (lastGame,idPlayer)
-            cursorObject.execute(sql, val)
 
         while continuer:       
 
@@ -983,7 +729,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
                         main()
                     if tryagainrect.collidepoint(x,y):
                         continuer = False
-                        game(imageball,background,idPlayer,bestGame,bonus)
+                        game(imageball,background)
 
             #test = pygame.Surface((800,600), pygame.SRCALPHA) 
             #test.fill((255,255,255))
@@ -1010,9 +756,9 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
         
         
     pygame.display.flip() 
-    
+
     score = 0
-    lives = 3+bonusVies
+    lives = 3
     nbcoup = 0
     paddle1 = pygame.image.load("Images/PNG/50-Breakout-Tiles.png").convert_alpha()
     paddle2 = pygame.image.load("Images/PNG/51-Breakout-Tiles.png").convert_alpha()
@@ -1042,7 +788,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
     #pygame.display.flip() 
 
     score = 0
-    lives = 3+bonusVies
+    lives = 50
 
     liste_pouvoir = []
     ball_2_active = False
@@ -1056,6 +802,8 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
     retreci_count = 500
     extraball_count = 500
     laser_count = 500
+   
+
     # pouvoir = Pouvoir()
     # pouvoir.rect.x = 500
     # pouvoir.rect.y = 350
@@ -1065,10 +813,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
     while continuer:
         if lives == 0:
             continuer = False
-            spendTime=time.time()-start_time
-            ball_speed=ball.vitesse
-            #congratulation(imageball,background,score,nbcoup,lives,spendTime,ball_speed,idPlayer,bestGame) #Pour test ecran de victoire sans gagner
-            gameover(imageball,background,score,nbcoup,lives,spendTime,ball_speed,idPlayer,bestGame)
+            gameover(imageball,background)
         # --- Main event looP
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -1153,7 +898,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
 
                # elif pouvoir.rand_pouvoir == 5:
                 #elif pouvoir.rand_pouvoir == 6:
-                #elif pouvoir.rand_pouvoir == 7: 
+                #elif pouvoir.rand_pouvoir == 7:
         if laser_active:
             if ball.lose():
                 laser_right.kill()
@@ -1248,9 +993,6 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
                 laser_right.kill()
                 laser_left.kill()
                 laser_active = False
-
-
-
         if 'extra_ball' in globals():
             if extra_ball.lose():
                 extra_ball.kill()
@@ -1301,19 +1043,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
                         score += 200
 
                 if len(all_bricks) == 0:
-                    #INTEGRER CONGRATULATION
-                    # Display Level Complete Message for 3 seconds
-                    # font = pygame.font.Font(None, 74)
-                    text = font.render("LEVEL COMPLETE", 1, WHITE)
-                    screen.blit(text, (200, 300))
-                    pygame.display.flip()
-                    pygame.time.wait(3000)
-
-                    # Stop the Game
-                    continuer = False
-
-        for pouvoir in liste_pouvoir:
-            all_sprites_list.add(pouvoir)
+                   congratulation(imageball,background,score,nbcoup,lives)
 
         if pygame.sprite.collide_mask(ball, paddle):
             ball.flip_direction_y()
@@ -1355,7 +1085,9 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
             liste_pouvoir = []
             ball_2_active = False
             paddle.image = pygame.image.load("Images/50-Breakout-Tiles.png").convert_alpha()
-            paddle.image = pygame.transform.scale(paddle.image, (100,30))  
+            paddle.image = pygame.transform.scale(paddle.image, (100,30)) 
+            
+
             #ball.move()
 
             #for event in pygame.event.get():                
@@ -1415,10 +1147,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
                 #pygame.time.wait(3000)
 
                 # Stop the Game
-                spendTime=(time.time() - start_time)
-                ball_speed=ball.vitesse
-                congratulation(imageball,background,score,nbcoup,lives,spendTime,ball_speed,idPlayer,bestGame)
-
+                congratulation(imageball,background,score,nbcoup,lives)
 
 
 
@@ -1435,7 +1164,7 @@ def game(imageball,background,idPlayer,bestGame,bonusVies):
         screen.blit(text, (20,10))
         text = font.render("Stage: 1", 1, WHITE)
         screen.blit(text, (350,10))
-        text = font.render("Playtime : "+str(int(time.time()-start_time)), 1, WHITE)
+        text = font.render("Playtime : 00:01", 1, WHITE)
         screen.blit(text, (600,10))
         #reset
         if state == 0:
